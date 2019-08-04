@@ -3,8 +3,8 @@
     <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link> |
-      <router-link to="/login">登录</router-link> | 
-      <router-link to="/draft">填写</router-link> | 
+      <router-link to="/login">登录</router-link> |
+      <router-link to="/draft">填写</router-link> |
       <router-link to="/listAll">展示</router-link>
     </div>
     <router-view/>
