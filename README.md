@@ -1,6 +1,7 @@
 # kbm-client
 
 ## Project setup
+
 ```
 npm install
 ```
@@ -26,9 +27,17 @@ npm run lint
 ```
 
 ### Run your unit tests
+
 ```
 npm run test:unit
 ```
 
 ### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+
+See [Configuration Reference](https://cli.vuejs.org/zh/config/).
+
+
+
+## Element UI
+
+See [Element Reference](https://element.eleme.cn/#/zh-CN/component/installation).
