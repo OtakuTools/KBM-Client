@@ -5,38 +5,46 @@
     <el-table
       ref="filterTable"
       :data="tableData"
-      style="width: 100%">
-      <el-table-column
-        prop="date"
-        label="日期"
-        sortable
-        width="180"
-        column-key="date"
-        :filters="[{text: '2016-05-01', value: '2016-05-01'}, {text: '2016-05-02', value: '2016-05-02'}, {text: '2016-05-03', value: '2016-05-03'}, {text: '2016-05-04', value: '2016-05-04'}]"
-        :filter-method="filterHandler"
+      style="width: 100%"
       >
+      <el-table-column
+        prop="sequence"
+        label="知识编号"
+        sortable
+        >
       </el-table-column>
       <el-table-column
-        prop="name"
-        label="姓名"
-        width="180">
+        prop="department"
+        label="申请人部门"
+        :filters="departments"
+        :filter-method="filterHandler"
+        >
+        <template slot-scope="scope">
+          <el-tag effect="dark">
+            {{scope.row.department}}
+          </el-tag>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="address"
-        label="地址"
-        :formatter="formatter">
+        prop="applicant"
+        label="申请人姓名"
+        sortable
+        >
+      </el-table-column>
+      <el-table-column
+        prop="kTitle"
+        label="知识条目标题">
       </el-table-column>
       <el-table-column
         prop="tag"
-        label="标签"
-        width="100"
-        :filters="[{ text: '家', value: '家' }, { text: '公司', value: '公司' }]"
-        :filter-method="filterTag"
-        filter-placement="bottom-end">
+        label="操作"
+        >
         <template slot-scope="scope">
-          <el-tag
-            :type="scope.row.tag === '家' ? 'primary' : 'success'"
-            disable-transitions>{{scope.row.tag}}</el-tag>
+          <el-button-group>
+            <el-button type="success">新建</el-button>
+            <el-button type="warning">修改</el-button>
+            <el-button type="danger">删除</el-button>
+          </el-button-group>
         </template>
       </el-table-column>
     </el-table>
@@ -48,26 +56,51 @@ export default {
   data () {
     return {
       tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        tag: '家'
+        sequence: 'ZSK20190801001',
+        department: '总经理',
+        applicant: '王小一',
+        knowledgetype: '知',
+        discoverTime: '20190801',
+        resolveTime: '20190807',
+        lastfor: '6',
+        kTitle: '文本生成至 28% 出错',
+        kContent: '文本生成至 28% 出错',
+        kMethod: 'ignore'
       }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄',
-        tag: '公司'
+        sequence: 'ZSK20190801002',
+        department: '管理者代表',
+        applicant: '孙小二',
+        knowledgetype: '识',
+        discoverTime: '20190801',
+        resolveTime: '20190802',
+        lastfor: '1',
+        kTitle: '文本生成至 27% 出错',
+        kContent: '文本生成至 27% 出错',
+        kMethod: 'ignore'
       }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄',
-        tag: '家'
+        sequence: 'ZSK20190801003',
+        department: '残部',
+        applicant: '赵三',
+        knowledgetype: '类',
+        discoverTime: '20190801',
+        resolveTime: '20190803',
+        lastfor: '2',
+        kTitle: '文本生成至 26% 出错',
+        kContent: '文本生成至 26% 出错',
+        kMethod: 'ignore',
       }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄',
-        tag: '公司'
-      }]
+        sequence: 'ZSK20190801004',
+        department: '战略忽悠部',
+        applicant: '辛77',
+        knowledgetype: '别',
+        discoverTime: '20190801',
+        resolveTime: '20190803',
+        lastfor: '2',
+        kTitle: '文本生成至 25% 出错',
+        kContent: '文本生成至 25% 出错',
+        kMethod: 'ignore'
+      }],
+      departments: [{text: '战略忽悠部', value: '战略忽悠部'},{text: '残部', value: '残部'},{text: 'aaa', value: 'aaa'}]
     }
   },
   methods: {
@@ -76,12 +109,6 @@ export default {
     },
     clearFilter () {
       this.$refs.filterTable.clearFilter()
-    },
-    formatter (row, column) {
-      return row.address
-    },
-    filterTag (value, row) {
-      return row.tag === value
     },
     filterHandler (value, row, column) {
       const property = column['property']
