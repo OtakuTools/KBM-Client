@@ -3,6 +3,8 @@
     <el-container>
       <el-header></el-header>
       <el-main>
+        <el-button type="success"> 提交 </el-button>
+        <el-button type="danger"> 放弃 </el-button>
         <el-form :model="knowledgeForm">
           <el-form-item label="知识编号">
             <el-input v-model="knowledgeForm.sequence" placeholder="请输入知识编号"></el-input>
@@ -35,6 +37,8 @@
             <el-input v-model="knowledgeForm.kMethod" placeholder="请输入解决方法"></el-input>
           </el-form-item>
         </el-form>
+        <el-button type="success"> 提交 </el-button>
+        <el-button type="danger"> 放弃 </el-button>
       </el-main>
       <el-footer></el-footer>
     </el-container>

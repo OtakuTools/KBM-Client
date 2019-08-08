@@ -1,7 +1,5 @@
 <template>
   <div>
-    <el-button @click="resetDateFilter">清除日期过滤器</el-button>
-    <el-button @click="clearFilter">清除所有过滤器</el-button>
     <el-table
       ref="filterTable"
       :data="tableData"
@@ -41,9 +39,8 @@
         >
         <template slot-scope="scope">
           <el-button-group>
-            <el-button type="success">新建</el-button>
-            <el-button type="warning">修改</el-button>
-            <el-button type="danger">删除</el-button>
+            <el-button type="success">同意</el-button>
+            <el-button type="danger" disabled>不同意</el-button>
           </el-button-group>
         </template>
       </el-table-column>
@@ -104,16 +101,10 @@ export default {
     }
   },
   methods: {
-    resetDateFilter () {
-      this.$refs.filterTable.clearFilter('date')
-    },
-    clearFilter () {
-      this.$refs.filterTable.clearFilter()
-    },
     filterHandler (value, row, column) {
       const property = column['property']
       return row[property] === value
-    }
+    },
   }
 }
 </script>

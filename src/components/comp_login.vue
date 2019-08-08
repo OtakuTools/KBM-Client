@@ -11,6 +11,7 @@
             <el-input v-model="infoForm.pswd" placeholder="请输入密码"></el-input>
           </el-form-item>
         </el-form>
+        <el-button type="success"> 登录 </el-button>
       </el-main>
       <el-footer></el-footer>
     </el-container>
