@@ -3,8 +3,8 @@
     <el-container>
       <el-header></el-header>
       <el-main>
-        <el-button type="success"> 提交 </el-button>
-        <el-button type="danger"> 放弃 </el-button>
+        <el-button type="success" @click="submit" v-text="greenName"></el-button>
+        <el-button type="danger" @click="clear" v-text="redName"></el-button>
         <el-form :model="knowledgeForm">
           <el-form-item label="知识编号">
             <el-input v-model="knowledgeForm.sequence" placeholder="请输入知识编号"></el-input>
@@ -37,8 +37,8 @@
             <el-input v-model="knowledgeForm.kMethod" placeholder="请输入解决方法"></el-input>
           </el-form-item>
         </el-form>
-        <el-button type="success"> 提交 </el-button>
-        <el-button type="danger"> 放弃 </el-button>
+        <el-button type="success" @click="submit" v-text="greenName"></el-button>
+        <el-button type="danger" @click="clear" v-text="redName"></el-button>
       </el-main>
       <el-footer></el-footer>
     </el-container>
@@ -61,12 +61,28 @@ export default {
         'kTitle': '',
         'kContent': '',
         'kMethod': ''
-      }
+      },
+      greenName:(this.$cookies.get("token").slice(0,9)=="dataentry")?"dataentry":"admin",
+      redName:"放弃",
     }
   },
-
-  created() {
-    console.log(this.$cookies.get("token"));
+  methods:{
+    submit() {
+      console.log(this.$cookies.get("token"));
+      /*
+      this.axios.post("api/info/add?token=".concat(this.$cookies.get("token")), this.knowledgeForm).then(
+        (res) => { 
+          console.log(res.data);
+        },
+      ).catch(
+        (err) => { console.log(err); }
+      )
+      */
+    },
+    clear() {
+      console.log("attempt to clear")
+    }
   }
+  
 }
 </script>
