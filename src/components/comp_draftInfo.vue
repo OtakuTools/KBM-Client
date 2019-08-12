@@ -63,6 +63,10 @@ export default {
         'kMethod': ''
       }
     }
+  },
+
+  created() {
+    console.log(this.$cookies.get("token"));
   }
 }
 </script>

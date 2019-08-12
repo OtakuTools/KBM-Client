@@ -33,7 +33,13 @@ export default {
   methods: {
     login () {
       this.axios.post("api/user/login", this.infoForm).then(
-        (res) => { console.log(res.data); },
+        (res) => { 
+          console.log(res.data);
+          // 保存到cookies
+          this.$cookies.set("token", res.data.data.token);
+          // name为router.js中的对应路径名称
+          this.$router.push({'name': 'draft'})
+        },
       ).catch(
         (err) => { console.log(err); }
       )
