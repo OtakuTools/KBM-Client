@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <el-button @click="test">测试</el-button>
+    <el-button @click="sendMessage('hello')">测试</el-button>
     <p>
       For a guide and recipes on how to configure / customize this project,<br>
       check out the
@@ -39,6 +39,25 @@ export default {
   props: {
     msg: String
   },
+
+  data() {
+    let websocket = new WebSocket('ws://localhost:3001/');
+    websocket.onopen = () => {
+      console.log('websocket连接开启...')
+    }
+    websocket.onmessage = (event) => {
+      let data = event.data
+      let result = JSON.parse(data)
+      console.log('数据已接收...', result)
+    }
+    websocket.onclose = this.onWebsocketClose
+    websocket.onerror = this.onWebsocketError
+
+    return {
+      websocket: websocket
+    }
+  },
+
   methods: {
     test: function () {
       this.axios.get("api/signin/getVerifyCode").then(
@@ -46,6 +65,13 @@ export default {
       ).catch(
         (err) => { console.log(err); }
       )
+    },
+
+    // 发送message
+    sendMessage(info) {
+      if (this.websocket && typeof this.websocket.send === 'function') {
+        this.websocket.send(JSON.stringify(info))
+      }
     }
   }
 }
