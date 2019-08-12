@@ -62,7 +62,7 @@ export default {
         'kContent': '',
         'kMethod': ''
       },
-      greenName:(this.$cookies.get("token").slice(0,9)=="dataentry")?"dataentry":"admin",
+      greenName:(this.$cookies.get("token").slice(0,9)=="dataentry")?"you are dataentry":"you are admin",
       redName:"放弃",
     }
   },

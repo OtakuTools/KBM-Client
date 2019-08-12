@@ -54,7 +54,7 @@
                 <template slot-scope="scope">
                     <el-button-group>
                         <el-button type="info" round size="small">审计操作记录</el-button>
-                        <el-button type="warning" round size="small">强制下线</el-button>
+                        <el-button type="warning" round size="small" :disabled="scope.row.status===0">强制下线</el-button>
                         <el-button type="danger" round size="small">删除账户</el-button>
                     </el-button-group>
                     </template>
