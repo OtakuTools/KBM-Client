@@ -66,6 +66,9 @@ export default {
       redName:"放弃",
     }
   },
+  created() {
+    console.log(this.$route.query.sequence);
+  },
   methods:{
     submit() {
       console.log(this.$cookies.get("token"));
