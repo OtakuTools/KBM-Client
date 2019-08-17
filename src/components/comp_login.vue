@@ -4,9 +4,6 @@
       <el-header></el-header>
       <el-main>
         <el-row>
-          <el-col :span="10" :offset="6">{{errMsg}}</el-col>
-        </el-row>
-        <el-row>
           <el-col :span="10" :offset="6">
             <el-form :model="infoForm" label-position="left" ref="infoForm" label-width="80px" :rules="rules">
               <el-form-item label="用户名" prop="username">
@@ -42,7 +39,6 @@ export default {
   name: 'comp_login',
   data () {
     return {
-      errMsg: '',
       verifySlider: 0,
       isVerified: false,
       infoForm: {
@@ -85,11 +81,21 @@ export default {
                   this.$router.push({'name': 'listAll'})
                 }
               } else {
-                this.errMsg = response.msg;
+                this.$message({
+                  message: response.msg,
+                  type: "error"
+                });
+                this.verifySlider = 0;
               }
             },
           ).catch(
-            (err) => { console.log(err); }
+            (err) => { 
+              this.$message({
+                message: err,
+                type: "error"
+              });
+              this.verifySlider = 0;
+            }
           )
           return true;
         } else {
