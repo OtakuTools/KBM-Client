@@ -2,6 +2,11 @@
   <div>
     <el-row>
       <el-col :span="20" :offset="2">
+        <el-button type="primary" icon="el-icon-plus" @click="NewInfo" circle></el-button>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="20" :offset="2">
         <el-table ref="filterTable" :data="tableData" style="width: 100%" stripe>
           <el-table-column prop="sequence" label="知识编号" sortable></el-table-column>
           <el-table-column prop="curStatus" label="当前状态">
@@ -129,13 +134,24 @@ export default {
       );
     },
 
+    NewInfo() {
+      var [type, name, t] = this.$cookies.get('token').split('_');
+      this.$router.push({ 
+        name: 'draft', 
+        query: {
+          type: type
+        }
+      });
+    },
+
     More(row) {
-      console.log(row.sequence);
       var seq = row.sequence;
+      var [type, name, t] = this.$cookies.get('token').split('_');
       this.$router.push({ 
         name: 'draft', 
         query: { 
-          sequence: seq
+          sequence: seq,
+          type: type
         }
       });
     },
