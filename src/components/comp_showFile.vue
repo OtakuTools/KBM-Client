@@ -1,39 +1,58 @@
 <template>
   <div>
-    <el-row>
-      <el-col :span="20" :offset="2">
-        <el-button type="primary" icon="el-icon-plus" @click="NewInfo" circle></el-button>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="20" :offset="2">
-        <el-table ref="filterTable" :data="tableData" style="width: 100%" stripe>
-          <el-table-column prop="sequence" label="知识编号" sortable></el-table-column>
-          <el-table-column prop="curStatus" label="当前状态">
-            <template slot-scope="scope">
-              <el-tag effect="dark" type="success" size="small" v-if="scope.row.curStatus<10">{{status_succ[scope.row.curStatus]}}</el-tag>
-              <el-tag effect="dark" type="danger" size="small" v-else>{{status_fail[scope.row.curStatus-10]}}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="department" label="申请人部门" :filters="departments" :filter-method="filterHandler">
-            <template slot-scope="scope">
-              <el-tag effect="dark" size="small">
-                {{scope.row.department}}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="applicant" label="申请人姓名" sortable></el-table-column>
-          <el-table-column prop="kTitle" label="知识条目标题"></el-table-column>
-          <el-table-column prop="tag" label="操作">
-            <template slot-scope="scope">
-              <el-button type="primary" size="small" icon="el-icon-more" @click="More(scope.row)" circle></el-button>
-              <el-button type="success" size="small" icon="el-icon-check" @click="Agree(scope.row)" circle></el-button>
-              <el-button type="danger" size="small" icon="el-icon-close" @click="Disagree(scope.row)" circle></el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-col>
-    </el-row>
+    <el-container>
+      <el-header></el-header>
+      <el-main>
+        <el-row>
+          <el-col :span="20" :offset="2">
+            <el-input placeholder="请输入内容" v-model="searchContent" style="background-color: #fff;">
+              <el-select v-model="searchType" slot="prepend" placeholder="请选择" style="width: 130px;">
+                <el-option label="部门名称" value="department"></el-option>
+                <el-option label="申请人" value="applicant"></el-option>
+              </el-select>
+              <el-button slot="append" icon="el-icon-search" @click="searchData"></el-button>
+            </el-input>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="20" :offset="2">
+            <el-button type="primary" icon="el-icon-plus" @click="NewInfo" circle></el-button>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="20" :offset="2">
+            <el-table ref="filterTable" :data="tableData" style="width: 100%" stripe>
+              <el-table-column prop="sequence" label="知识编号" sortable></el-table-column>
+              <el-table-column prop="curStatus" label="当前状态">
+                <template slot-scope="scope">
+                  <el-tag effect="dark" type="success" size="small" v-if="scope.row.curStatus<10">{{status_succ[scope.row.curStatus]}}</el-tag>
+                  <el-tag effect="dark" type="danger" size="small" v-else>{{status_fail[scope.row.curStatus-10]}}</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="department" label="申请人部门" :filters="departments" :filter-method="filterHandler">
+                <template slot-scope="scope">
+                  <el-tag effect="dark" size="small">
+                    {{scope.row.department}}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="applicant" label="申请人姓名" sortable></el-table-column>
+              <el-table-column prop="kTitle" label="知识条目标题"></el-table-column>
+              <el-table-column prop="tag" label="操作">
+                <template slot-scope="scope">
+                  <el-button type="primary" size="small" icon="el-icon-more" @click="More(scope.row)" circle></el-button>
+                  <el-button type="success" size="small" icon="el-icon-check" @click="Agree(scope.row)" circle></el-button>
+                  <el-button type="danger" size="small" icon="el-icon-close" @click="Disagree(scope.row)" circle></el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-col>
+        </el-row>
+      </el-main>
+      <el-footer>
+        <el-pagination :total="totalItems" :page-sizes="[1,10,20,50,80,100]" :current-page="currentPage" :page-size="20" @size-change="pageSizeChangeHandler" @current-change="pageChangeHandler" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
+      </el-footer>
+    </el-container>
   </div>
 </template>
 
@@ -43,53 +62,13 @@ import {CONFIG} from './../static/js/Config'
 export default {
   data () {
     return {
-      // tableData: [{
-      //   sequence: 'ZSK20190801001',
-      //   department: '总经理',
-      //   applicant: '王小一',
-      //   knowledgetype: '知',
-      //   discoverTime: '20190801',
-      //   resolveTime: '20190807',
-      //   lastfor: '6',
-      //   kTitle: '文本生成至 28% 出错',
-      //   kContent: '文本生成至 28% 出错',
-      //   kMethod: 'ignore'
-      // }, {
-      //   sequence: 'ZSK20190801002',
-      //   department: '管理者代表',
-      //   applicant: '孙小二',
-      //   knowledgetype: '识',
-      //   discoverTime: '20190801',
-      //   resolveTime: '20190802',
-      //   lastfor: '1',
-      //   kTitle: '文本生成至 27% 出错',
-      //   kContent: '文本生成至 27% 出错',
-      //   kMethod: 'ignore'
-      // }, {
-      //   sequence: 'ZSK20190801003',
-      //   department: '残部',
-      //   applicant: '赵三',
-      //   knowledgetype: '类',
-      //   discoverTime: '20190801',
-      //   resolveTime: '20190803',
-      //   lastfor: '2',
-      //   kTitle: '文本生成至 26% 出错',
-      //   kContent: '文本生成至 26% 出错',
-      //   kMethod: 'ignore',
-      // }, {
-      //   sequence: 'ZSK20190801004',
-      //   department: '战略忽悠部',
-      //   applicant: '辛77',
-      //   knowledgetype: '别',
-      //   discoverTime: '20190801',
-      //   resolveTime: '20190803',
-      //   lastfor: '2',
-      //   kTitle: '文本生成至 25% 出错',
-      //   kContent: '文本生成至 25% 出错',
-      //   kMethod: 'ignore'
-      // }],
-      // departments: [{text: '战略忽悠部', value: '战略忽悠部'},{text: '残部', value: '残部'},{text: 'aaa', value: 'aaa'}]
-      searchType: [],
+      currentPage: 1,
+      totalItems: 0,
+      pageSize: 50,
+
+      searchType: "",
+      searchContent: "",
+
       tableData : [],
       departments : [],
       status_succ: ["创建成功","修改成功","审核通过","入库成功","移库成功"],
@@ -98,17 +77,45 @@ export default {
   },
 
   created() {
-    this.getAllInfo(1, 10, null);
+    this.getAllInfo(this.currentPage, this.pageSize, null);
   },
 
   methods: {
-    filterHandler (value, row, column) {
+    filterHandler(value, row, column) {
       const property = column['property']
       return row[property] === value
     },
 
+    pageSizeChangeHandler(val) {
+      this.pageSize = val;
+      this.currentPage = 1;
+      this.getAllInfo(this.currentPage, this.pageSize, this.searchType);
+    },
+
+    pageChangeHandler(val) {
+      this.currentPage = val;
+      this.getAllInfo(this.currentPage, this.pageSize, this.searchType);
+    },
+
+    searchData() {
+      let option = "";
+      if (this.searchType == "" || this.searchContent == "") {
+        this.$message({
+          message: "搜索类型或搜索内容不能为空",
+          type: "error"
+        });
+        return;
+      } else if(this.searchType == "department") {
+        option = `department=${this.searchContent}`
+      } else if(this.searchType == "applicant"){
+        option = `applicant=${this.searchContent}`
+      }
+      this.currentPage = 1;
+      this.getAllInfo(this.currentPage, this.pageSize, option);
+    },
+
     getAllInfo(page, pageSize, option) {
-      this.axios.get(`api/info/search?token=${this.$cookies.get('token')}&page=${page}&pageSize=${pageSize}`).then(
+      this.axios.get(`api/info/search?token=${this.$cookies.get('token')}&page=${page}&pageSize=${pageSize}${option? "&"+option: ""}`).then(
         (res) => {
           let response = res.data;
           this.tableData = [];
@@ -121,6 +128,7 @@ export default {
                 value: item.department
               })
             }
+            this.totalItems = response.data.count;
             this.tableData = response.data.content;
             this.departments = deps;
           } else {
