@@ -1,8 +1,13 @@
 <template>
   <div>
-    <compheader />
-    <compaside />
-    <userList />
+    <el-container>
+      <el-header>
+        <compheader />
+      </el-header>
+      <el-main>
+        <userList />
+      </el-main>
+    </el-container>
   </div>
 </template>
 

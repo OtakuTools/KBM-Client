@@ -1,34 +1,20 @@
 <template>
   <div>
-    <el-container>
-      <el-header></el-header>
-      <el-main>
-        <el-row type="flex" align="middle">
-          <el-col :span="11">
-            <el-menu mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-              <el-menu-item index="1" disabled><i class="el-icon-info"></i></el-menu-item>
-            </el-menu>
-          </el-col>
-          <el-col :span="2">
-            <img :height="150" src="../assets/logo.png">
-          </el-col>
-          <el-col :span="11">
-            <el-menu mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-              <el-submenu index="3">
-                <template slot="title">
-                  <el-avatar shape="circle" fit="fill" size="small" src="../assets/logo.png"></el-avatar>
-                  <span v-text="username"> 用户名 </span>
-                </template>            
-                <el-menu-item index="3-1" v-text="username"> 用户名 </el-menu-item>
-                <el-menu-item index="3-2" v-text="userType"> 用户权限 </el-menu-item>
-              </el-submenu>
-              <el-menu-item index="5"><i class="el-icon-switch-button"></i><a>退出登录</a></el-menu-item>
-            </el-menu>
-          </el-col>
-        </el-row>
-      </el-main>
-      <el-footer></el-footer>
-    </el-container>
+    <el-menu mode="horizontal" style="overflow: hidden; height: 60px;">
+      <el-submenu index="1" style="position: absolute; right: 120px; height: 60px; overflow: hidden;">
+        <template slot="title">
+          <el-avatar shape="circle" fit="fill" size="small" src="../assets/logo.png" style="margin-right: 10px;"></el-avatar>
+          <span v-text="username"></span>
+        </template>            
+        <el-menu-item index="1-1" v-text="userType"></el-menu-item>
+      </el-submenu>
+      <el-menu-item index="2" style="position: absolute; right: 0px; height: 60px; overflow: hidden;">
+        <i class="el-icon-switch-button"></i><a @click="logout">退出登录</a>
+      </el-menu-item>
+      <el-menu-item index="3" style="position: absolute; left: 0px; height: 60px; overflow: hidden;">
+        <img :height="60" src="../assets/logo.png">
+      </el-menu-item>
+    </el-menu>
   </div>
 </template>
 
@@ -36,11 +22,42 @@
 export default {
     data () {
         return {
-          username : 'Ming',
-          userType : 'admin',
+          username : '',
+          userType : '',
         }
     },
+
+    created() {
+      let [type, name, t] = this.$cookies.get("token").split("_");
+      this.username = name;
+      this.userType = `权限：${type}`;
+    },
+
     methods: {
+      logout() {
+        this.axios.get(`api/user/logout?token=${this.$cookies.get("token")}`).then(
+          (res) => {
+            let response = res.data;
+            if (!response.errorCode) {
+              this.$router.push({
+                name: "login"
+              });
+            } else {
+              this.$message({
+                message: "登出失败",
+                type: "error"
+              });
+            }
+          }
+        ).catch(
+          (error) => {
+            this.$message({
+              message: error,
+              type: "error"
+            });
+          }
+        )
+      }
     }
 }
 </script>
