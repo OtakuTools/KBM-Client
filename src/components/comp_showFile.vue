@@ -16,11 +16,6 @@
         </el-row>
         <el-row>
           <el-col :span="20" :offset="2">
-            <el-button type="primary" icon="el-icon-plus" @click="NewInfo" circle></el-button>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="20" :offset="2">
             <el-table ref="filterTable" :data="tableData" style="width: 100%" stripe>
               <el-table-column prop="sequence" label="知识编号" sortable></el-table-column>
               <el-table-column prop="curStatus" label="当前状态">
@@ -39,6 +34,14 @@
               <el-table-column prop="applicant" label="申请人姓名" sortable></el-table-column>
               <el-table-column prop="kTitle" label="知识条目标题"></el-table-column>
               <el-table-column prop="tag" label="操作">
+                <template slot="header">
+                  <div>
+                    <a>操作</a>
+                  </div>
+                  <div>
+                    <el-button type="primary" size="small" icon="el-icon-plus" @click="NewInfo" circle></el-button>
+                  </div>
+                </template>
                 <template slot-scope="scope">
                   <el-button type="primary" size="small" icon="el-icon-more" @click="More(scope.row)" circle></el-button>
                   <el-button type="success" size="small" icon="el-icon-check" @click="Agree(scope.row)" circle></el-button>
