@@ -1,0 +1,128 @@
+<template>
+  <div>
+    <el-container>
+      <el-header></el-header>
+      <el-main>
+        <el-row>
+          <el-col :span="10" :offset="6">
+            <el-form :model="infoForm" label-position="left" ref="infoForm" label-width="80px" :rules="rules">
+              <el-form-item label="用户名" prop="username">
+                <el-input v-model="infoForm.username" placeholder="请输入用户名" clearable></el-input>
+              </el-form-item>
+              <el-form-item label="密码" prop="password">
+                <el-input v-model="infoForm.password" placeholder="请输入密码" clearable show-password></el-input>
+              </el-form-item>
+              <el-form-item label="角色" prop="type">
+                <el-select v-model="infoForm.type" placeholder="请选择用户角色">
+                  <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="10" :offset="6">
+            <el-button type="success" @click="regist('infoForm')"> 创建 </el-button>
+            <el-button type="danger" @click="clear('infoForm')"> 取消 </el-button>
+          </el-col>
+        </el-row>
+      </el-main>
+      <el-footer></el-footer>
+    </el-container>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'comp_regist',
+  data () {
+    return {
+      options: [
+        {
+          value: "admin",
+          label: "系统管理员"
+        },
+        {
+          value: "dataentry",
+          label: "录入员"
+        },
+        {
+          value: "manager",
+          label: "审批经理"
+        },
+        {
+          value: "kbAdmin",
+          label: "知识库管理员"
+        },
+      ],
+
+      infoForm: {
+        username: '',
+        password: '',
+        type: ''
+      },
+
+      rules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+        ],
+
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+        ],
+
+        type: [
+          { required: true, message: '请选择角色', trigger: 'blur' },
+        ],
+      }
+    }
+  },
+
+  methods: {
+    clear(formName) {
+      this.$refs[formName].resetFields();
+    },
+
+    regist(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let data = {
+            "username": this.infoForm.username,
+            "password": this.infoForm.password,
+            "type": this.infoForm.type
+          }
+          this.axios.post(`api/user/regist?token=${this.$cookies.get("token")}`, data).then(
+            (res) => { 
+              let response = res.data;
+              if (!response.errorCode) {
+                this.$message({
+                  message: "创建角色成功",
+                  type: "success"
+                });
+              } else {
+                this.$message({
+                  message: response.msg,
+                  type: "error"
+                });
+                this.verifySlider = 0;
+              }
+            },
+          ).catch(
+            (err) => { 
+              this.$message({
+                message: err,
+                type: "error"
+              });
+              this.verifySlider = 0;
+            }
+          )
+          return true;
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    }
+  }
+}
+</script>

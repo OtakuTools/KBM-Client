@@ -43,8 +43,8 @@
         sortable
         >
         <template slot-scope="scope">
-          <el-tag effect="dark" :type="scope.row.status===1?'success':'info'">
-            {{scope.row.status===1?'在线':'离线'}}
+          <el-tag effect="dark" :type="scope.row.status===0?'success':'info'">
+            {{scope.row.status===0?'在线':'离线'}}
           </el-tag>
         </template>
       </el-table-column>
