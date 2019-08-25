@@ -35,6 +35,9 @@
         label="最后登录"
         sortable
         >
+        <template slot-scope="scope">
+            {{scope.row.lastLogin==="0"? "无登陆状态": scope.row.lastLogin}}
+        </template>
       </el-table-column>
       <el-table-column
         prop="status"
@@ -69,37 +72,6 @@ import {CONFIG} from "./../static/js/Config"
 export default {
   data () {
     return {
-      // userData: [{
-      //   type: '录入员',
-      //   username: '王小一',
-      //   password: '文本生成至 28% 出错',
-      //   lastLogin: '0807',
-      //   status: 0,
-      // },{
-      //   type: '录入员',
-      //   username: '王小二',
-      //   password: '文本生成至 28% 出错',
-      //   lastLogin: '20190807',
-      //   status: 0,
-      // },{
-      //   type: '审核经理',
-      //   username: 'zzm',
-      //   password: '文本生成至 28% 出错',
-      //   lastLogin: '2019-08-07 13:14:00',
-      //   status: 1,
-      // },{
-      //   type: '知识库管理员',
-      //   username: 'hzt',
-      //   password: '文本生成至 28% 出错',
-      //   lastLogin: '2019-08-07',
-      //   status: 1,
-      // },{
-      //   type: '系统管理员',
-      //   username: '云焰',
-      //   password: '文本生成至 28% 出错',
-      //   lastLogin: '无登录记录',
-      //   status: 0,
-      // },]
       userType: {},
       userData: []
     }
