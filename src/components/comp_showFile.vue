@@ -73,8 +73,8 @@ export default {
 
       tableData : [],
       departments : [],
-      status_succ: ["创建成功","修改成功","审核通过","入库成功","移库成功"],
-      status_fail: ["创建失败","修改失败","审核失败","入库失败","移库失败"],
+      status_succ: ["创建成功","提交审核","修改成功","审核通过","入库成功","移库成功"],
+      status_fail: ["创建失败","提交失败","修改失败","审核失败","入库失败","移库失败"],
     }
   },
 
@@ -170,10 +170,11 @@ export default {
       console.log(row);
       var [type, name, t] = this.$cookies.get('token').split('_');
       if (type == CONFIG.UserType.manager) {
-        if (row.curStatus == CONFIG.Status.CREATE_SUCC || row.curStatus == CONFIG.Status.MODIFY_SUCC ) {
+        if (row.curStatus == CONFIG.Status.SUBMIT_SUCC ) {
           var data = {
             sequence: row.sequence,
-            curStatus: CONFIG.Status.AUDIT_SUCC
+            curStatus: CONFIG.Status.AUDIT_SUCC,
+            auditor: name
           }
           this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
             (res) => {
@@ -230,10 +231,11 @@ export default {
       console.log(row);
       var [type, name, t] = this.$cookies.get('token').split('_');
       if (type == CONFIG.UserType.manager) {
-        if (row.curStatus == CONFIG.Status.CREATE_SUCC || row.curStatus == CONFIG.Status.MODIFY_SUCC ) {
+        if (row.curStatus == CONFIG.Status.SUBMIT_SUCC ) {
           var data = {
             sequence: row.sequence,
-            curStatus: CONFIG.Status.AUDIT_FAIL
+            curStatus: CONFIG.Status.AUDIT_FAIL,
+            auditor: name
           }
           this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
             (res) => {

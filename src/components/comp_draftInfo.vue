@@ -41,7 +41,8 @@
         </el-row>
         <el-row>
           <el-col :span="20" :offset="2" v-if="userType == 0">
-            <el-button type="success" @click="submit('knowledgeForm')">保存</el-button>
+            <el-button type="success" @click="create('knowledgeForm')">保存</el-button>
+            <el-button type="warning" @click="submit('knowledgeForm')">提交审核</el-button>
             <el-button type="danger" @click="clear('knowledgeForm')">取消</el-button>
           </el-col>
           <el-col :span="20" :offset="2" v-else>
@@ -168,13 +169,51 @@ export default {
   },
 
   methods:{
+    create(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let data = Object.assign({}, this.knowledgeForm);
+          data["author"] = this.$cookies.get("token").split("_")[1];
+          if (data.curStatus > 10) {
+            data.curStatus = CONFIG.Status.MODIFY_SUCC;
+          }
+          this.axios.post(`api/info/${this.$route.query.sequence? "modify" : "add"}?token=${this.$cookies.get("token")}`, data).then(
+            (res) => {
+              let response = res.data;
+              console.log(response);
+              if (!response.errorCode) {
+                this.$router.push({
+                  name: "listAll"
+                });
+              } else {
+                this.$message({
+                  message: response.msg,
+                  type: "error"
+                });
+              }
+            },
+          ).catch(
+            (error) => {
+              this.$message({
+                message: error,
+                type: "error"
+              });
+            }
+          )
+          return true;
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+
     submit(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let data = Object.assign({}, this.knowledgeForm);
-          if (data.curStatus > 10) {
-            data.curStatus = CONFIG.Status.MODIFY_SUCC;
-          }
+          data["author"] = this.$cookies.get("token").split("_")[1];
+          data.curStatus = CONFIG.Status.SUBMIT_SUCC;
           this.axios.post(`api/info/${this.$route.query.sequence? "modify" : "add"}?token=${this.$cookies.get("token")}`, data).then(
             (res) => {
               let response = res.data;
@@ -215,10 +254,11 @@ export default {
     Agree() {
       var [type, name, t] = this.$cookies.get('token').split('_');
       if (type == CONFIG.UserType.manager) {
-        if (this.knowledgeForm.curStatus == CONFIG.Status.CREATE_SUCC || this.knowledgeForm.curStatus == CONFIG.Status.MODIFY_SUCC ) {
+        if (this.knowledgeForm.curStatus == CONFIG.Status.SUBMIT_SUCC ) {
           var data = {
             sequence: this.knowledgeForm.sequence,
-            curStatus: CONFIG.Status.AUDIT_SUCC
+            curStatus: CONFIG.Status.AUDIT_SUCC,
+            auditor: name
           }
           this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
             (res) => {
@@ -288,10 +328,11 @@ export default {
     Disagree() {
       var [type, name, t] = this.$cookies.get('token').split('_');
       if (type == CONFIG.UserType.manager) {
-        if (this.knowledgeForm.curStatus == CONFIG.Status.CREATE_SUCC || this.knowledgeForm.curStatus == CONFIG.Status.MODIFY_SUCC ) {
+        if (this.knowledgeForm.curStatus == CONFIG.Status.SUBMIT_SUCC ) {
           var data = {
             sequence: this.knowledgeForm.sequence,
-            curStatus: CONFIG.Status.AUDIT_FAIL
+            curStatus: CONFIG.Status.AUDIT_FAIL,
+            auditor: name
           }
           this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
             (res) => {
