@@ -3,9 +3,9 @@
     <el-header>
       <compheader />
     </el-header>
-    <el-mian>
+    <el-main>
       <compDraftInfo />
-    </el-mian>
+    </el-main>
   </el-container>
 </template>
 
