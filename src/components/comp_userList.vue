@@ -26,7 +26,7 @@
         >
         <template slot-scope="scope">
           <el-tag effect="dark">
-            {{scope.row.type}}
+            {{userType[scope.row.type]}}
           </el-tag>
         </template>
       </el-table-column>
@@ -54,8 +54,8 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button type="info" round size="small">审计操作记录</el-button>
-            <el-button type="warning" round size="small" :disabled="scope.row.status===0">强制下线</el-button>
-            <el-button type="danger" round size="small">删除账户</el-button>
+            <el-button type="warning" round size="small" :disabled="scope.row.status===1">强制下线</el-button>
+            <el-button type="danger" round size="small" @click="deleteUser(scope.row)" :disabled="scope.row.status===0">删除账户</el-button>
           </el-button-group>
           </template>
       </el-table-column>
@@ -65,6 +65,7 @@
 </template>
 
 <script>
+import {CONFIG} from "./../static/js/Config"
 export default {
   data () {
     return {
@@ -99,12 +100,17 @@ export default {
       //   lastLogin: '无登录记录',
       //   status: 0,
       // },]
+      userType: {},
       userData: []
     }
   },
 
   created() {
     this.getInfo();
+    this.userType[CONFIG.UserType.admin] = "系统管理员";
+    this.userType[CONFIG.UserType.manager] = "审批经理";
+    this.userType[CONFIG.UserType.kbAdmin] = "知识库管理员";
+    this.userType[CONFIG.UserType.dataEntry] = "录入员";
   },
 
   methods: {
@@ -121,6 +127,36 @@ export default {
           } else {
             this.$message({
               message: "无法获取用户信息",
+              type: "error"
+            });
+          }
+        }
+      ).catch(
+        (error) => {
+          this.$message({
+            message: error,
+            type: "error"
+          });
+        }
+      );
+    },
+
+    deleteUser(row) {
+      console.log(row);
+      let data = {
+        "username": row.username
+      };
+      this.axios.post(`api/user/delete?token=${this.$cookies.get("token")}`, data).then(
+        (res) => {
+          let response = res.data;
+          if (!response.errorCode) {
+            this.$message({
+              message: "删除用户成功",
+              type: "success"
+            });
+          } else {
+            this.$message({
+              message: response.msg,
               type: "error"
             });
           }
