@@ -1,7 +1,6 @@
 <template>
   <div>
     <el-container>
-      <el-header></el-header>
       <el-main>
         <el-row>
           <el-col :span="20" :offset="2">
