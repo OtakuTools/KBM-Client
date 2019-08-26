@@ -39,6 +39,7 @@ export default {
   name: 'comp_login',
   data () {
     return {
+      websocket: null,
       verifySlider: 0,
       isVerified: false,
       infoForm: {
@@ -58,7 +59,44 @@ export default {
     }
   },
 
+  mounted() {
+    if (typeof(WebSocket) === "undefined"){
+      this.$message({
+        message: "该浏览器不支持WebSocket",
+        type: "error"
+      });
+    } else {
+      this.websocket = new WebSocket('ws://localhost:3001/');
+      this.websocket.onopen = (event) => {
+        console.log('websocket connected');
+      };
+
+      this.websocket.onmessage = (event) => {
+        
+      };
+
+      this.websocket.onclose = (event) => {
+        console.log("WebSocket is closed now.");
+      };
+
+      this.websocket.onerror = (event) => {
+        console.error("WebSocket error observed:", event);
+      };
+    }
+  },
+
+  destroyed () {
+      // 销毁监听
+      this.websocket.close();
+  },
+
   methods: {
+    sendMessage(info) {
+      if (this.websocket && typeof this.websocket.send === 'function') {
+        this.websocket.send(JSON.stringify(info));
+      }
+    },
+
     login(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid && this.isVerified) {
@@ -75,6 +113,10 @@ export default {
                 this.$cookies.set("token", res.data.data.token);
                 // name为router.js中的对应路径名称
                 var [type, name, time] = res.data.data.token.split("_");
+                this.sendMessage({
+                  type: 0,
+                  event: "user login"
+                })
                 if (type == "admin") {
                   this.$router.push({'name': 'adminControl'})
                 } else {

@@ -37,6 +37,8 @@ export default {
   name: 'comp_regist',
   data () {
     return {
+      websocket: null,
+      
       options: [
         {
           value: "admin",

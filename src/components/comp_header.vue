@@ -20,44 +20,86 @@
 
 <script>
 export default {
-    data () {
-        return {
-          username : '',
-          userType : '',
-        }
+  data () {
+    return {
+      websocket: null,
+      username : '',
+      userType : '',
+    }
+  },
+
+  created() {
+    let [type, name, t] = this.$cookies.get("token").split("_");
+    this.username = name;
+    this.userType = `权限：${type}`;
+  },
+
+  mounted() {
+    if (typeof(WebSocket) === "undefined"){
+      this.$message({
+        message: "该浏览器不支持WebSocket",
+        type: "error"
+      });
+    } else {
+      this.websocket = new WebSocket('ws://localhost:3001/');
+      this.websocket.onopen = (event) => {
+        console.log('websocket connected');
+      };
+
+      this.websocket.onmessage = (event) => {
+        
+      };
+
+      this.websocket.onclose = (event) => {
+        console.log("WebSocket is closed now.");
+      };
+
+      this.websocket.onerror = (event) => {
+        console.error("WebSocket error observed:", event);
+      };
+    }
+  },
+
+  destroyed () {
+    // 销毁监听
+    this.websocket.close();
+  },
+
+  methods: {
+    sendMessage(info) {
+      if (this.websocket && typeof this.websocket.send === 'function') {
+        this.websocket.send(JSON.stringify(info));
+      }
     },
 
-    created() {
-      let [type, name, t] = this.$cookies.get("token").split("_");
-      this.username = name;
-      this.userType = `权限：${type}`;
-    },
-
-    methods: {
-      logout() {
-        this.axios.get(`api/user/logout?token=${this.$cookies.get("token")}`).then(
-          (res) => {
-            let response = res.data;
-            if (!response.errorCode) {
-              this.$router.push({
-                name: "login"
-              });
-            } else {
-              this.$message({
-                message: "登出失败",
-                type: "error"
-              });
-            }
-          }
-        ).catch(
-          (error) => {
+    logout() {
+      this.axios.get(`api/user/logout?token=${this.$cookies.get("token")}`).then(
+        (res) => {
+          let response = res.data;
+          if (!response.errorCode) {
+            this.sendMessage({
+              type: 0,
+              event: "user logout"
+            });
+            this.$router.push({
+              name: "login"
+            });
+          } else {
             this.$message({
-              message: error,
+              message: "登出失败",
               type: "error"
             });
           }
-        )
-      }
+        }
+      ).catch(
+        (error) => {
+          this.$message({
+            message: error,
+            type: "error"
+          });
+        }
+      )
     }
+  }
 }
 </script>
