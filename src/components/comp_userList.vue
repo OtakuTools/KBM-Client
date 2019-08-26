@@ -73,7 +73,8 @@ export default {
   data () {
     return {
       userType: {},
-      userData: []
+      userData: [],
+      websocket: null
     }
   },
 
@@ -85,9 +86,50 @@ export default {
     this.userType[CONFIG.UserType.dataEntry] = "录入员";
   },
 
+  mounted() {
+    if (typeof(WebSocket) === "undefined"){
+      this.$message({
+        message: "该浏览器不支持WebSocket",
+        type: "error"
+      });
+    } else {
+      this.websocket = new WebSocket('ws://localhost:3001/');
+      this.websocket.onopen = (event) => {
+        console.log('websocket connected');
+      };
+
+      this.websocket.onmessage = (event) => {
+        let data = event.data;
+        let result = JSON.parse(data);
+        if (result.type === 0) {
+          this.getInfo();
+        }
+      };
+
+      this.websocket.onclose = (event) => {
+        console.log("WebSocket is closed now.");
+      };
+
+      this.websocket.onerror = (event) => {
+        console.error("WebSocket error observed:", event);
+      };
+    }
+  },
+
+  destroyed () {
+      // 销毁监听
+      this.websocket.close();
+  },
+
   methods: {
     filterHandler (value, row, column) {
       return row.type === value
+    },
+
+    sendMessage(info) {
+      if (this.websocket && typeof this.websocket.send === 'function') {
+        this.websocket.send(JSON.stringify(info));
+      }
     },
 
     getInfo() {
@@ -125,6 +167,10 @@ export default {
               message: "删除用户成功",
               type: "success"
             });
+            this.sendMessage({
+              type: 0,
+              event: "delete user"
+            });
           } else {
             this.$message({
               message: response.msg,
@@ -153,6 +199,10 @@ export default {
             this.$message({
               message: "用户强制下线成功",
               type: "success"
+            });
+            this.sendMessage({
+              type: 0,
+              event: "force offline"
             });
           } else {
             this.$message({

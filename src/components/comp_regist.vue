@@ -78,7 +78,44 @@ export default {
     }
   },
 
+  mounted() {
+    if (typeof(WebSocket) === "undefined"){
+      this.$message({
+        message: "该浏览器不支持WebSocket",
+        type: "error"
+      });
+    } else {
+      this.websocket = new WebSocket('ws://localhost:3001/');
+      this.websocket.onopen = (event) => {
+        console.log('websocket connected');
+      };
+
+      this.websocket.onmessage = (event) => {
+        
+      };
+
+      this.websocket.onclose = (event) => {
+        console.log("WebSocket is closed now.");
+      };
+
+      this.websocket.onerror = (event) => {
+        console.error("WebSocket error observed:", event);
+      };
+    }
+  },
+
+  destroyed () {
+      // 销毁监听
+      this.websocket.close();
+  },
+
   methods: {
+    sendMessage(info) {
+      if (this.websocket && typeof this.websocket.send === 'function') {
+        this.websocket.send(JSON.stringify(info));
+      }
+    },
+
     clear(formName) {
       this.$refs[formName].resetFields();
     },
@@ -98,6 +135,11 @@ export default {
                 this.$message({
                   message: "创建角色成功",
                   type: "success"
+                });
+                this.clear(formName);
+                this.sendMessage({
+                  type: 0,
+                  event: "create user"
                 });
               } else {
                 this.$message({
