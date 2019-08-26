@@ -149,7 +149,7 @@ export default {
           let response = res.data;
           console.log(response);
           if (!response.errorCode) {
-            this.knowledgeForm.sequence = `ZSK${response.data.day.split('-').join('')}${response.data.seq}`;
+            this.knowledgeForm.sequence = `ZSK${response.data.day.split('-').map(e => e.length < 2? "0" + e : e).join('')}${response.data.seq}`;
           } else {
             this.$message({
               message: response.msg,
