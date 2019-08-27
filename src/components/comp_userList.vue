@@ -55,15 +55,28 @@
         label="账户操作"
         >
         <template slot-scope="scope">
-          <el-button-group>
-            <el-button type="info" round size="small">审计操作记录</el-button>
-            <el-button type="warning" round size="small" @click="forceOffline(scope.row)" :disabled="scope.row.status===1">强制下线</el-button>
-            <el-button type="danger" round size="small" @click="deleteUser(scope.row)" :disabled="scope.row.status===0">删除账户</el-button>
-          </el-button-group>
-          </template>
+          <el-button type="text" round size="small" @click="showLog(scope.row)">操作记录</el-button>
+          <el-button type="text" round size="small" @click="forceOffline(scope.row)" :disabled="scope.row.status===1">强制下线</el-button>
+          <el-button type="text" round size="small" @click="deleteUser(scope.row)" :disabled="scope.row.status===0">删除账户</el-button>
+        </template>
       </el-table-column>
     </el-table>
-    
+    <el-dialog title="操作日志" :visible.sync="logTableVisible">
+      <el-container>
+        <el-main>
+          <el-table :data="logData">
+            <el-table-column property="modifyTime" label="日期" width="150"></el-table-column>
+            <el-table-column property="type" label="类型" width="200"></el-table-column>
+            <el-table-column property="content" label="内容"></el-table-column>
+          </el-table>
+        </el-main>
+        <el-footer>
+          <el-pagination :total="logTotal" :page-sizes="[1,10,20,50,80,100]" :current-page="logCurPage" 
+          :page-size="logPageSize" layout="total, sizes, prev, pager, next, jumper"
+          @size-change="sizeChangeHandler" @current-change="pageChangeHandler"></el-pagination>
+        </el-footer>
+      </el-container>
+    </el-dialog>
   </div>
 </template>
 
@@ -74,7 +87,13 @@ export default {
     return {
       userType: {},
       userData: [],
-      websocket: null
+      websocket: null,
+      logTableVisible: false,
+      logData: [],
+      logCurPage: 0,
+      logPageSize: 0,
+      logTotal: 0,
+      currentRow: null
     }
   },
 
@@ -130,6 +149,17 @@ export default {
       if (this.websocket && typeof this.websocket.send === 'function') {
         this.websocket.send(JSON.stringify(info));
       }
+    },
+
+    sizeChangeHandler(val) {
+      this.logCurPage = 1;
+      this.logPageSize = val;
+      this.getLog(this.currentRow.username, this.logCurPage, this.logPageSize);
+    },
+
+    pageChangeHandler(val) {
+      this.logCurPage = val;
+      this.getLog(this.currentRow.username, this.logCurPage, this.logPageSize);
     },
 
     getInfo() {
@@ -204,6 +234,38 @@ export default {
               type: 0,
               event: "force offline"
             });
+          } else {
+            this.$message({
+              message: response.msg,
+              type: "error"
+            });
+          }
+        }
+      ).catch(
+        (error) => {
+          this.$message({
+            message: error,
+            type: "error"
+          });
+        }
+      )
+    },
+
+    showLog(row) {
+      this.currentRow = row;
+      this.logCurPage = 1;
+      this.logPageSize = 20;
+      this.getLog(row.username, this.logCurPage, this.logPageSize);
+    },
+
+    getLog(username, page, pageSize, option=null) {
+      this.axios.get(`api/user/log?token=${this.$cookies.get("token")}&username=${username}&page=${page}&pageSize=${pageSize}${option?"&"+option:""}`).then(
+        (res) => {
+          let response = res.data;
+          if (!response.errorCode) {
+            this.logTotal = response.data.count;
+            this.logData = response.data.content;
+            this.logTableVisible = true;
           } else {
             this.$message({
               message: response.msg,
