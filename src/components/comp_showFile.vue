@@ -69,7 +69,7 @@
                     </div>
                     <div v-else>
                       <el-button type="primary" size="small" icon="el-icon-more" @click="More(scope.row)" circle></el-button>
-                      <el-button type="danger" size="small" icon="el-icon-document-remove" @click="MoveDB(scope.row)" circle v-if="uType=='dataentry'"></el-button>
+                      <el-button type="danger" size="small" icon="el-icon-document-remove" @click="MoveDB(scope.row)" circle v-if="uType=='dataentry' && scope.row.curStatus==4"></el-button>
                     </div>
                   </template>
                 </el-table-column>

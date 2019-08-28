@@ -66,7 +66,11 @@
         <el-main>
           <el-table :data="logData">
             <el-table-column property="modifyTime" label="日期" width="150"></el-table-column>
-            <el-table-column property="type" label="类型" width="200"></el-table-column>
+            <el-table-column property="type" label="类型" width="200">
+              <template slot-scope="scope">
+                {{scope.row.type? "知识类":"用户类"}}
+              </template>
+            </el-table-column>
             <el-table-column property="content" label="内容"></el-table-column>
           </el-table>
         </el-main>
