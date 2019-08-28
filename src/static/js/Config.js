@@ -5,14 +5,18 @@ var CONFIG = {
         SUBMIT_SUCC: 2,  // 提交申请
         AUDIT_SUCC: 3,   // 审批
         INBOUND_SUCC: 4, // 入库
-        DELETE_SUCC: 5,  // 移库
+        MOVE_SUB_SUCC: 5,  // 移库申请
+        MOVE_AUD_SUCC: 6,  // 移库审核
+        MOVE_SUCC: 7,  // 移库完成
 
         CREATE_FAIL: 10,
         MODIFY_FAIL: 11,
         SUBMIT_FAIL: 12,
         AUDIT_FAIL: 13,
         INBOND_FAIL: 14,
-        DELETE_FAIL: 15
+        MOVE_SUB_FAIL: 15,
+        MOVE_AUD_FAIL: 16,
+        MOVE_FAIL: 17,
     },
 
     UserType: {
