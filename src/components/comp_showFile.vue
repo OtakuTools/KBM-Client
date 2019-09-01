@@ -113,7 +113,9 @@ export default {
       menuOption: "",
 
       uType: "",
-      menuIndex: 1
+      menuIndex: 1,
+
+      websocket: null
     }
   },
 
@@ -135,6 +137,41 @@ export default {
     this.getAllInfo(this.currentPage, this.pageSize, this.menuOption);
   },
 
+  mounted() {
+    if (typeof(WebSocket) === "undefined"){
+      this.$message({
+        message: "该浏览器不支持WebSocket",
+        type: "error"
+      });
+    } else {
+      this.websocket = new WebSocket('ws://localhost:3001/');
+      this.websocket.onopen = (event) => {
+        console.log('websocket connected');
+      };
+
+      this.websocket.onmessage = (event) => {
+        let data = event.data;
+        let result = JSON.parse(data);
+        if (result.type === 1) {
+          this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+        }
+      };
+
+      this.websocket.onclose = (event) => {
+        console.log("WebSocket is closed now.");
+      };
+
+      this.websocket.onerror = (event) => {
+        console.error("WebSocket error observed:", event);
+      };
+    }
+  },
+
+  destroyed () {
+      // 销毁监听
+      this.websocket.close();
+  },
+
   methods: {
     filterHandler(value, row, column) {
       const property = column['property']
@@ -145,6 +182,12 @@ export default {
       this.pageSize = val;
       this.currentPage = 1;
       this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+    },
+
+    sendMessage(info) {
+      if (this.websocket && typeof this.websocket.send === 'function') {
+        this.websocket.send(JSON.stringify(info));
+      }
     },
 
     pageChangeHandler(val) {
@@ -233,6 +276,10 @@ export default {
           var response = res.data;
           if (!response.errorCode) {
             this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+            this.sendMessage({
+              type: 1,
+              event: "delete info"
+            });
           } else {
             this.$message({
               message: response.msg,
@@ -243,9 +290,9 @@ export default {
       ).catch(
         (error) => {
           this.$message({
-              message: error,
-              type: "error"
-            });
+            message: error,
+            type: "error"
+          });
         }
       );
     },
@@ -262,6 +309,10 @@ export default {
           var response = res.data;
           if (!response.errorCode) {
             this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+            this.sendMessage({
+              type: 1,
+              event: "move db"
+            });
           } else {
             this.$message({
               message: response.msg,
@@ -294,6 +345,10 @@ export default {
               var response = res.data;
               if (!response.errorCode) {
                 this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+                this.sendMessage({
+                  type: 1,
+                  event: "agree audit"
+                });
               } else {
                 this.$message({
                   message: response.msg,
@@ -321,6 +376,10 @@ export default {
               var response = res.data;
               if (!response.errorCode) {
                 this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+                this.sendMessage({
+                  type: 1,
+                  event: "agree inbound"
+                });
               } else {
                 this.$message({
                   message: response.msg,
@@ -341,7 +400,6 @@ export default {
     },
 
     Disagree(row) {
-      console.log(row);
       var [type, name, t] = this.$cookies.get('token').split('_');
       if (type == CONFIG.UserType.manager) {
         if (row.curStatus == CONFIG.Status.SUBMIT_SUCC || row.curStatus == CONFIG.Status.MOVE_AUD_SUCC ) {
@@ -355,6 +413,10 @@ export default {
               var response = res.data;
               if (!response.errorCode) {
                 this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+                this.sendMessage({
+                  type: 1,
+                  event: "disagree audit"
+                });
               } else {
                 this.$message({
                   message: response.msg,
@@ -382,6 +444,10 @@ export default {
               var response = res.data;
               if (!response.errorCode) {
                 this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+                this.sendMessage({
+                  type: 1,
+                  event: "disagree inbound"
+                });
               } else {
                 this.$message({
                   message: response.msg,

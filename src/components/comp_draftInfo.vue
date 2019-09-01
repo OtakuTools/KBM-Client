@@ -42,7 +42,7 @@
         <el-row>
           <el-col :span="20" :offset="2" v-if="userType == 0">
             <el-button type="success" @click="create('knowledgeForm')">保存</el-button>
-            <el-button type="warning" @click="submit('knowledgeForm')">提交审核</el-button>
+            <el-button type="warning" @click="submit('knowledgeForm')" :disabled="!canSubmit">提交审核</el-button>
             <el-button type="danger" @click="clear('knowledgeForm')">取消</el-button>
           </el-col>
           <el-col :span="20" :offset="2" v-else>
@@ -109,7 +109,9 @@ export default {
         ]
       },
 
-      userType: 0
+      userType: 0,
+      websocket: null,
+      canSubmit: false
     }
   },
 
@@ -122,6 +124,7 @@ export default {
       }
     }
     if (this.$route.query.sequence) {
+      this.canSubmit = true;
       this.axios.get(`api/info/getInfo?token=${this.$cookies.get("token")}&sequence=${this.$route.query.sequence}`).then(
         (res) => {
           let response = res.data;
@@ -143,13 +146,15 @@ export default {
           });
         }
       );
+    } else if(this.$cookies.get("new_seq") &&  this.$cookies.get("new_seq") != "") {
+      this.knowledgeForm.sequence = this.$cookies.get("new_seq");
     } else {
       this.axios.get(`api/info/getSeq?token=${this.$cookies.get("token")}`).then(
         (res) => {
           let response = res.data;
-          console.log(response);
           if (!response.errorCode) {
             this.knowledgeForm.sequence = `ZSK${response.data.day.split('-').map(e => e.length < 2? "0" + e : e).join('')}${response.data.seq}`;
+            this.$cookies.set("new_seq", this.knowledgeForm.sequence);
           } else {
             this.$message({
               message: response.msg,
@@ -168,7 +173,44 @@ export default {
     }
   },
 
+  mounted() {
+    if (typeof(WebSocket) === "undefined"){
+      this.$message({
+        message: "该浏览器不支持WebSocket",
+        type: "error"
+      });
+    } else {
+      this.websocket = new WebSocket('ws://localhost:3001/');
+      this.websocket.onopen = (event) => {
+        console.log('websocket connected');
+      };
+
+      this.websocket.onmessage = (event) => {
+        
+      };
+
+      this.websocket.onclose = (event) => {
+        console.log("WebSocket is closed now.");
+      };
+
+      this.websocket.onerror = (event) => {
+        console.error("WebSocket error observed:", event);
+      };
+    }
+  },
+
+  destroyed () {
+      // 销毁监听
+      this.websocket.close();
+  },
+
   methods:{
+    sendMessage(info) {
+      if (this.websocket && typeof this.websocket.send === 'function') {
+        this.websocket.send(JSON.stringify(info));
+      }
+    },
+
     create(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -180,8 +222,12 @@ export default {
           this.axios.post(`api/info/${this.$route.query.sequence? "modify" : "add"}?token=${this.$cookies.get("token")}`, data).then(
             (res) => {
               let response = res.data;
-              console.log(response);
               if (!response.errorCode) {
+                this.$cookies.set("new_seq", "");
+                this.sendMessage({
+                  type: 1,
+                  event: "create info"
+                });
                 this.$router.push({
                   name: "listAll"
                 });
@@ -217,8 +263,11 @@ export default {
           this.axios.post(`api/info/${this.$route.query.sequence? "modify" : "add"}?token=${this.$cookies.get("token")}`, data).then(
             (res) => {
               let response = res.data;
-              console.log(response);
               if (!response.errorCode) {
+                this.sendMessage({
+                  type: 1,
+                  event: "submit info"
+                });
                 this.$router.push({
                   name: "listAll"
                 });
@@ -264,6 +313,10 @@ export default {
             (res) => {
               var response = res.data;
               if (!response.errorCode) {
+                this.sendMessage({
+                  type: 1,
+                  event: "agree audit"
+                });
                 this.$router.push({
                   name: "listAll"
                 });
@@ -298,6 +351,10 @@ export default {
             (res) => {
               var response = res.data;
               if (!response.errorCode) {
+                this.sendMessage({
+                  type: 1,
+                  event: "agree inbound"
+                });
                 this.$router.push({
                   name: "listAll"
                 });
@@ -338,6 +395,10 @@ export default {
             (res) => {
               var response = res.data;
               if (!response.errorCode) {
+                this.sendMessage({
+                  type: 1,
+                  event: "disagree audit"
+                });
                 this.$router.push({
                   name: "listAll"
                 });
@@ -372,6 +433,10 @@ export default {
             (res) => {
               var response = res.data;
               if (!response.errorCode) {
+                this.sendMessage({
+                  type: 1,
+                  event: "disagree inbound"
+                });
                 this.$router.push({
                   name: "listAll"
                 });
