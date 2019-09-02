@@ -59,18 +59,32 @@
                   </template>
                   <template slot-scope="scope">
                     <div v-if="menuIndex==1">
-                      <el-button type="primary" size="small" icon="el-icon-edit" @click="More(scope.row)" circle :disabled="scope.row.curStatus==2" v-if="uType=='dataentry'"></el-button>
-                      <el-button type="primary" size="small" icon="el-icon-more" @click="More(scope.row)" circle v-else></el-button>
+                      <el-tooltip effect="dark" content="修改" placement="top">
+                        <el-button type="primary" size="small" icon="el-icon-edit" @click="More(scope.row)" circle :disabled="scope.row.curStatus==2" v-if="uType=='dataentry'"></el-button>
+                        <el-button type="primary" size="small" icon="el-icon-more" @click="More(scope.row)" circle v-else></el-button>
+                      </el-tooltip>
 
-                      <el-button type="warning" size="small" icon="el-icon-top" @click="Submit(scope.row)" circle :disabled="scope.row.curStatus==2" v-if="uType=='dataentry'"></el-button>
-                      <el-button type="danger" size="small" icon="el-icon-delete" @click="Delete(scope.row)" circle :disabled="scope.row.curStatus==2" v-if="uType=='dataentry'"></el-button>
+                      <el-tooltip effect="dark" content="提交" placement="top">
+                        <el-button type="warning" size="small" icon="el-icon-top" @click="Submit(scope.row)" circle :disabled="scope.row.curStatus==2" v-if="uType=='dataentry'"></el-button>
+                      </el-tooltip>
+                      <el-tooltip effect="dark" content="删除" placement="top">
+                        <el-button type="danger" size="small" icon="el-icon-delete" @click="Delete(scope.row)" circle :disabled="scope.row.curStatus==2" v-if="uType=='dataentry'"></el-button>
+                      </el-tooltip>
 
-                      <el-button type="success" size="small" icon="el-icon-check" @click="Agree(scope.row)" circle v-if="uType!='dataentry'"></el-button>
-                      <el-button type="danger" size="small" icon="el-icon-close" @click="Disagree(scope.row)" circle v-if="uType!='dataentry'"></el-button>
+                      <el-tooltip effect="dark" content="同意" placement="top">
+                        <el-button type="success" size="small" icon="el-icon-check" @click="Agree(scope.row)" circle v-if="uType!='dataentry'"></el-button>
+                      </el-tooltip>
+                      <el-tooltip effect="dark" content="不同意" placement="top">
+                        <el-button type="danger" size="small" icon="el-icon-close" @click="Disagree(scope.row)" circle v-if="uType!='dataentry'"></el-button>
+                      </el-tooltip>
                     </div>
                     <div v-else>
-                      <el-button type="primary" size="small" icon="el-icon-more" @click="More(scope.row)" circle></el-button>
-                      <el-button type="danger" size="small" icon="el-icon-document-remove" @click="MoveDB(scope.row)" circle v-if="uType=='dataentry' && scope.row.curStatus==4"></el-button>
+                      <el-tooltip effect="dark" content="更多" placement="top">
+                        <el-button type="primary" size="small" icon="el-icon-more" @click="More(scope.row)" circle></el-button>
+                      </el-tooltip>
+                      <el-tooltip effect="dark" content="移库" placement="top">
+                        <el-button type="danger" size="small" icon="el-icon-document-remove" @click="MoveDB(scope.row)" circle v-if="uType=='dataentry' && scope.row.curStatus==4"></el-button>
+                      </el-tooltip>
                     </div>
                   </template>
                 </el-table-column>
