@@ -42,7 +42,7 @@
                     <el-tag effect="dark" type="danger" size="small" v-else>{{status_fail[scope.row.curStatus-10]}}</el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column prop="department" label="申请人部门" :filters="departments" :filter-method="filterHandler">
+                <el-table-column prop="department" label="申请人部门">
                   <template slot-scope="scope">
                     <el-tag effect="dark" size="small">
                       {{scope.row.department}}
