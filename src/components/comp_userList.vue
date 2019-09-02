@@ -4,6 +4,7 @@
       ref="filterTable"
       style="width:100%"
       :data="userData"
+      v-loading="loadingTable"
       >
       <el-table-column
         prop="username"
@@ -97,7 +98,8 @@ export default {
       logCurPage: 0,
       logPageSize: 0,
       logTotal: 0,
-      currentRow: null
+      currentRow: null,
+      loadingTable: false
     }
   },
 
@@ -167,8 +169,10 @@ export default {
     },
 
     getInfo() {
+      this.loadingTable = true;
       this.axios.get(`api/user/information?token=${this.$cookies.get("token")}`).then(
         (res) => {
+          this.loadingTable = false;
           let response = res.data;
           if (!response.errorCode) {
             this.userData = response.data;
@@ -181,6 +185,7 @@ export default {
         }
       ).catch(
         (error) => {
+          this.loadingTable = false;
           this.$message({
             message: error,
             type: "error"
