@@ -14,7 +14,7 @@
               </el-form-item>
               <el-form-item label="角色" prop="type">
                 <el-select v-model="infoForm.type" placeholder="请选择用户角色">
-                  <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                  <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" style="width: 100%;"> </el-option>
                 </el-select>
               </el-form-item>
             </el-form>

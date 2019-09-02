@@ -19,10 +19,10 @@
                 <el-input v-model="knowledgeForm.knowledgeType" placeholder="请输入知识类别"></el-input>
               </el-form-item>
               <el-form-item label="问题发现时间" prop="discoverTime">
-                <el-date-picker v-model="knowledgeForm.discoverTime" type="date" placeholder="请输入问题发现时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd"></el-date-picker>
+                <el-date-picker v-model="knowledgeForm.discoverTime" type="date" style="width: 100%;" placeholder="请输入问题发现时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd"></el-date-picker>
               </el-form-item>
               <el-form-item label="问题解决时间" prop="resolveTime">
-                <el-date-picker v-model="knowledgeForm.resolveTime" type="date" placeholder="请输入问题解决时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd"></el-date-picker>
+                <el-date-picker v-model="knowledgeForm.resolveTime" type="date" style="width: 100%;" placeholder="请输入问题解决时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd"></el-date-picker>
               </el-form-item>
               <el-form-item label="问题持续时间" prop="lastfor">
                 <el-input v-model="knowledgeForm.lastfor" placeholder="请输入问题持续时间"></el-input>
@@ -41,8 +41,8 @@
         </el-row>
         <el-row>
           <el-col :span="20" :offset="2" v-if="userType == 0">
-            <el-button type="success" @click="create('knowledgeForm')">保存</el-button>
-            <el-button type="warning" @click="submit('knowledgeForm')" :disabled="!canSubmit">提交审核</el-button>
+            <el-button type="success" @click="create('knowledgeForm')">{{canSubmit? "保存修改":"保存" }}</el-button>
+            <el-button type="warning" @click="submit('knowledgeForm')" :disabled="!canSubmit" v-if="canSubmit">提交审核</el-button>
             <el-button type="danger" @click="clear('knowledgeForm')">取消</el-button>
           </el-col>
           <el-col :span="20" :offset="2" v-else>
