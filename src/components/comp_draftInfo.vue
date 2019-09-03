@@ -44,6 +44,7 @@
             <el-button type="success" @click="create('knowledgeForm')">{{canSubmit? "保存修改":"保存" }}</el-button>
             <el-button type="warning" @click="submit('knowledgeForm')" :disabled="!canSubmit" v-if="canSubmit">提交审核</el-button>
             <el-button type="danger" @click="clear('knowledgeForm')">取消</el-button>
+            <el-button type="primary" @click="back('knowledgeForm')">返回</el-button>
           </el-col>
           <el-col :span="20" :offset="2" v-else>
             <el-button type="success" @click="Agree">同意</el-button>
@@ -298,6 +299,13 @@ export default {
       let seq = this.knowledgeForm.sequence;
       this.$refs[formName].resetFields();
       this.knowledgeForm.sequence = seq;
+    },
+
+    back(formName) {
+      this.$refs[formName].resetFields();
+      this.$router.push({
+        name: "listAll"
+      });
     },
 
     Agree() {
