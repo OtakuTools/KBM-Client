@@ -64,9 +64,6 @@
                         <el-button type="primary" size="small" icon="el-icon-more" @click="More(scope.row)" circle v-else></el-button>
                       </el-tooltip>
 
-                      <el-tooltip effect="dark" content="提交" placement="top">
-                        <el-button type="warning" size="small" icon="el-icon-top" @click="Submit(scope.row)" circle :disabled="scope.row.curStatus==2" v-if="uType=='dataentry'"></el-button>
-                      </el-tooltip>
                       <el-tooltip effect="dark" content="删除" placement="top">
                         <el-button type="danger" size="small" icon="el-icon-delete" @click="Delete(scope.row)" circle :disabled="scope.row.curStatus==2" v-if="uType=='dataentry'"></el-button>
                       </el-tooltip>
