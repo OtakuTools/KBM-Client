@@ -3,31 +3,36 @@
     <el-container>
       <el-header></el-header>
       <el-main>
-        <el-row>
-          <el-col :span="10" :offset="6">
-            <el-form :model="infoForm" label-position="left" ref="infoForm" label-width="80px" :rules="rules">
-              <el-form-item label="用户名" prop="username">
-                <el-input v-model="infoForm.username" placeholder="请输入用户名" clearable></el-input>
-              </el-form-item>
-              <el-form-item label="密码" prop="password">
-                <el-input v-model="infoForm.password" placeholder="请输入密码" clearable show-password></el-input>
-              </el-form-item>
-            </el-form>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="4" :offset="6">
-            <span>拖动验证</span>
-          </el-col>
-          <el-col :span="6" :offset="0">
-            <el-slider v-model="verifySlider" @input="move"></el-slider>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="10" :offset="6">
-            <el-button id="loginButton" type="success" @click="login('infoForm')" :disabled="!isVerified"> 登录 </el-button>
-          </el-col>
-        </el-row>
+        <el-card class="box-card" style="width: 500px; height: 420px; position: absolute; left: calc(50% - 250px); top: calc(50% - 210px);">
+          <el-row style="margin: 10px 0px;">
+            <el-col :span="20" :offset="2">
+              <img :height="100" src="../assets/logo.png">
+            </el-col>
+          </el-row>
+          <el-row style="margin: 10px 0px;">
+            <el-col :span="20" :offset="2">
+              <el-form :model="infoForm" status-icon label-position="left" ref="infoForm" label-width="80px" :rules="rules">
+                <el-form-item label="用户名" prop="username">
+                  <el-input v-model="infoForm.username" placeholder="请输入用户名" clearable></el-input>
+                </el-form-item>
+                <el-form-item label="密码" prop="password">
+                  <el-input v-model="infoForm.password" placeholder="请输入密码" clearable show-password></el-input>
+                </el-form-item>
+                <el-form-item label="验证码" prop="verifycode">
+                  <template>
+                    <el-input v-model="infoForm.verifycode" placeholder="请输入验证码" clearable style="width: calc(100% - 100px); display: inline-block;"></el-input>
+                    <div id="verify" style="float: right; overflow:hidden; height: 40px; display: inline-block;"></div>
+                  </template>
+                </el-form-item>
+              </el-form>
+            </el-col>
+          </el-row>
+          <el-row style="margin: 10px 0px;">
+            <el-col :span="20" :offset="2">
+              <el-button type="success" @click="login('infoForm')" :disabled="!isVerified" style="width: 100%;"> 登录 </el-button>
+            </el-col>
+          </el-row>
+        </el-card>
       </el-main>
       <el-footer></el-footer>
     </el-container>
@@ -35,16 +40,31 @@
 </template>
 
 <script>
+import {getGVerify} from '../static/js/verifyCode'
 export default {
   name: 'comp_login',
   data () {
+    var checkVerifyCode = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入验证码'));
+      } else {
+        if (this.infoForm.verifycode !== '' && this.verifyCode.validate(this.infoForm.verifycode)) {
+          this.isVerified = true;
+          callback();
+        } else {
+          callback(new Error('验证码出错'));
+        }
+      }
+    };
     return {
       websocket: null,
       verifySlider: 0,
+      verifyCode: null,
       isVerified: false,
       infoForm: {
         username: '',
-        password: ''
+        password: '',
+        verifycode: ''
       },
 
       rules: {
@@ -55,11 +75,23 @@ export default {
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
         ],
+
+        verifycode: [
+          { validator: checkVerifyCode, trigger: 'blur' },
+        ],
       }
     }
   },
 
   mounted() {
+    this.verifyCode = getGVerify({
+        id: "verify",
+        canvasId: "verifyCanvas",
+        width: "100",
+        height: "40",
+        type: "blend",
+        code: ""
+    });
     if (typeof(WebSocket) === "undefined"){
       this.$message({
         message: "该浏览器不支持WebSocket",
@@ -99,7 +131,7 @@ export default {
 
     login(formName) {
       this.$refs[formName].validate((valid) => {
-        if (valid && this.isVerified) {
+        if (valid) {
           let data = {
             "username": this.infoForm.username,
             "password": this.infoForm.password
@@ -145,23 +177,6 @@ export default {
           return false;
         }
       });
-    },
-
-    move(val) {
-      this.verifySlider = val;
-      if (this.verifySlider < 100) {
-        this.isVerified = false;
-      } else {
-        this.$refs['infoForm'].validate((valid) => {
-          if (valid) {
-            this.isVerified = true;
-            return true;
-          } else {
-            this.isVerified = false;
-            return false;
-          }
-        });
-      }
     }
   }
 }

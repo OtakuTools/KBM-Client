@@ -21,7 +21,7 @@
           <el-row>
             <el-col :span="uType=='dataentry'? 16:20" :offset="2">
               <el-input placeholder="请输入内容" v-model="searchContent" style="background-color: #fff;">
-                <el-select v-model="searchType" slot="prepend" placeholder="请选择" style="width: 130px;">
+                <el-select v-model="searchType" slot="prepend" placeholder="请选择查找类型" style="width: 180px;">
                   <el-option label="部门名称" value="department"></el-option>
                   <el-option label="申请人" value="applicant"></el-option>
                 </el-select>
@@ -34,7 +34,7 @@
           </el-row>
           <el-row>
             <el-col :span="20" :offset="2">
-              <el-table ref="filterTable" :data="tableData" style="width: 100%" stripe>
+              <el-table v-loading="loadingTable" ref="filterTable" :data="tableData" style="width: 100%" stripe>
                 <el-table-column prop="sequence" label="知识编号" sortable></el-table-column>
                 <el-table-column prop="curStatus" label="当前状态">
                   <template slot-scope="scope">
@@ -129,7 +129,8 @@ export default {
       uType: "",
       menuIndex: 1,
 
-      websocket: null
+      websocket: null,
+      loadingTable: false
     }
   },
 
@@ -234,8 +235,10 @@ export default {
     },
 
     getAllInfo(page, pageSize, option) {
+      this.loadingTable = true;
       this.axios.get(`api/info/search?token=${this.$cookies.get('token')}&page=${page}&pageSize=${pageSize}${option? "&"+option: ""}`).then(
         (res) => {
+          this.loadingTable = false;
           let response = res.data;
           this.tableData = [];
           this.department = [];
@@ -256,7 +259,11 @@ export default {
         }
       ).catch(
         (err) => {
-          this.$message(err);
+          this.loadingTable = false;
+          this.$message({
+            message: err,
+            type: "error"
+          });
         }
       );
     },
