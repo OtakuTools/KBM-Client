@@ -41,6 +41,7 @@
 
 <script>
 import {getGVerify} from '../static/js/verifyCode'
+import { CONFIG } from '../static/js/Config';
 export default {
   name: 'comp_login',
   data () {
@@ -58,7 +59,6 @@ export default {
     };
     return {
       websocket: null,
-      verifySlider: 0,
       verifyCode: null,
       isVerified: false,
       infoForm: {
@@ -98,7 +98,7 @@ export default {
         type: "error"
       });
     } else {
-      this.websocket = new WebSocket('ws://localhost:3001/');
+      this.websocket = new WebSocket(CONFIG.WS.url);
       this.websocket.onopen = (event) => {
         console.log('websocket connected');
       };
@@ -159,7 +159,6 @@ export default {
                   message: response.msg,
                   type: "error"
                 });
-                this.verifySlider = 0;
               }
             },
           ).catch(
@@ -168,7 +167,6 @@ export default {
                 message: err,
                 type: "error"
               });
-              this.verifySlider = 0;
             }
           )
           return true;

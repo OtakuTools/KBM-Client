@@ -24,6 +24,10 @@ var CONFIG = {
         manager : "manager", // 审计经理
         dataEntry : "dataentry", // 录入员
         kbAdmin : "kbAdmin" // 知识库管理员
+    },
+
+    WS: {
+        url: "ws://localhost:3001"
     }
 }
 

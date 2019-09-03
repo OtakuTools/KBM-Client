@@ -13,8 +13,8 @@
                 <el-input v-model="infoForm.password" placeholder="请输入密码" clearable show-password></el-input>
               </el-form-item>
               <el-form-item label="角色" prop="type">
-                <el-select v-model="infoForm.type" placeholder="请选择用户角色">
-                  <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" style="width: 100%;"> </el-option>
+                <el-select v-model="infoForm.type" placeholder="请选择用户角色" style="width: 100%;">
+                  <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                 </el-select>
               </el-form-item>
             </el-form>
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import {CONFIG} from "./../static/js/Config"
 export default {
   name: 'comp_regist',
   data () {
@@ -87,7 +88,7 @@ export default {
         type: "error"
       });
     } else {
-      this.websocket = new WebSocket('ws://localhost:3001/');
+      this.websocket = new WebSocket(CONFIG.WS.url);
       this.websocket.onopen = (event) => {
         console.log('websocket connected');
       };
@@ -148,7 +149,6 @@ export default {
                   message: response.msg,
                   type: "error"
                 });
-                this.verifySlider = 0;
               }
             },
           ).catch(
@@ -157,7 +157,6 @@ export default {
                 message: err,
                 type: "error"
               });
-              this.verifySlider = 0;
             }
           )
           return true;

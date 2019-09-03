@@ -79,8 +79,9 @@
                       <el-tooltip effect="dark" content="更多" placement="top">
                         <el-button type="primary" size="small" icon="el-icon-more" @click="More(scope.row)" circle></el-button>
                       </el-tooltip>
+
                       <el-tooltip effect="dark" content="移库" placement="top">
-                        <el-button type="danger" size="small" icon="el-icon-document-remove" @click="MoveDB(scope.row)" circle v-if="uType=='dataentry' && scope.row.curStatus==4"></el-button>
+                        <el-button type="danger" size="small" icon="el-icon-document-remove" @click="MoveDB(scope.row)" circle v-show="uType=='dataentry' && scope.row.curStatus==4"></el-button>
                       </el-tooltip>
                     </div>
                   </template>
@@ -156,7 +157,7 @@ export default {
         type: "error"
       });
     } else {
-      this.websocket = new WebSocket('ws://localhost:3001/');
+      this.websocket = new WebSocket(CONFIG.WS.url);
       this.websocket.onopen = (event) => {
         console.log('websocket connected');
       };
@@ -218,9 +219,10 @@ export default {
     searchData() {
       if (this.searchType == "" || this.searchContent == "") {
         this.$message({
-          message: "搜索类型或搜索内容不能为空",
-          type: "error"
+          message: "搜索类型或搜索内容为空",
+          type: "warning"
         });
+        this.getAllInfo(this.currentPage, this.pageSize, `${this.menuOption}`);
         return;
       } else if(this.searchType == "department") {
         this.searchText = `department=${this.searchContent}`

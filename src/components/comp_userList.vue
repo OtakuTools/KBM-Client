@@ -118,7 +118,7 @@ export default {
         type: "error"
       });
     } else {
-      this.websocket = new WebSocket('ws://localhost:3001/');
+      this.websocket = new WebSocket(CONFIG.WS.url);
       this.websocket.onopen = (event) => {
         console.log('websocket connected');
       };
