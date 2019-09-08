@@ -5,6 +5,7 @@
       style="width:100%"
       :data="userData"
       v-loading="loadingTable"
+      highlight-current-row
       >
       <el-table-column
         prop="username"
@@ -13,9 +14,21 @@
         >
       </el-table-column>
       <el-table-column
+        prop="realname"
+        label="用户姓名"
+        sortable
+        >
+      </el-table-column>
+      <el-table-column
+        prop="department"
+        label="所属部门"
+        sortable
+        >
+      </el-table-column>
+      <el-table-column
         prop="type"
         label="权限"
-        width= 180px
+        width="180"
         sortable
         :filters="[
           {text: '录入员', value: '录入员'},
@@ -35,6 +48,7 @@
         prop="lastLogin"
         label="最后登录"
         sortable
+        width="200"
         >
         <template slot-scope="scope">
             {{scope.row.lastLogin==="0"? "无登陆状态": scope.row.lastLogin}}
@@ -42,8 +56,8 @@
       </el-table-column>
       <el-table-column
         prop="status"
-        label="账户状态"
-        width= 180px
+        label="状态"
+        width="100"
         sortable
         >
         <template slot-scope="scope">
@@ -54,6 +68,8 @@
       </el-table-column>
       <el-table-column
         label="账户操作"
+        fixed="right"
+        width="300"
         >
         <template slot-scope="scope">
           <el-button type="text" round size="small" @click="showLog(scope.row)">操作记录</el-button>

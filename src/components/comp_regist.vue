@@ -6,6 +6,12 @@
         <el-row>
           <el-col :span="10" :offset="6">
             <el-form :model="infoForm" label-position="left" ref="infoForm" label-width="80px" :rules="rules">
+              <el-form-item label="用户姓名" prop="realname">
+                <el-input v-model="infoForm.realname" placeholder="请输入真实姓名" clearable></el-input>
+              </el-form-item>
+              <el-form-item label="所属部门" prop="department">
+                <el-input v-model="infoForm.department" placeholder="请输入所属部门" clearable></el-input>
+              </el-form-item>
               <el-form-item label="用户名" prop="username">
                 <el-input v-model="infoForm.username" placeholder="请输入用户名" clearable></el-input>
               </el-form-item>
@@ -60,18 +66,28 @@ export default {
       ],
 
       infoForm: {
+        realname: '',
+        department: '',
         username: '',
         password: '',
         type: ''
       },
 
       rules: {
+        realname: [
+          { required: true, message: '输入不能为空', trigger: 'blur' },
+        ],
+
+        department: [
+          { required: true, message: '输入不能为空', trigger: 'blur' },
+        ],
+
         username: [
-          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { required: true, message: '输入不能为空', trigger: 'blur' },
         ],
 
         password: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
+          { required: true, message: '输入不能为空', trigger: 'blur' },
         ],
 
         type: [
@@ -129,6 +145,8 @@ export default {
           let data = {
             "username": this.infoForm.username,
             "password": this.infoForm.password,
+            "realname": this.infoForm.realname,
+            "department": this.infoForm.department,
             "type": this.infoForm.type
           }
           this.axios.post(`api/user/regist?token=${this.$cookies.get("token")}`, data).then(

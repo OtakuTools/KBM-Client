@@ -20,13 +20,30 @@
         <el-main>
           <el-row>
             <el-col :span="uType=='dataentry'? 16:20" :offset="2">
-              <el-input placeholder="请输入内容" v-model="searchContent" style="background-color: #fff;">
+              <el-input placeholder="请输入内容" v-model="searchContent" style="background-color: #fff;" @focus="value1=searchType=='timeInterval'" :readonly="searchType=='timeInterval'">
                 <el-select v-model="searchType" slot="prepend" placeholder="请选择查找类型" style="width: 180px;">
                   <el-option label="部门名称" value="department"></el-option>
                   <el-option label="申请人" value="applicant"></el-option>
+                  <el-option label="入库时间" value="timeInterval"></el-option>
+                  <el-option label="知识标题" value="kTitle"></el-option>
                 </el-select>
                 <el-button slot="append" icon="el-icon-search" @click="searchData"></el-button>
               </el-input>
+              <el-dialog title="时间选择" :visible.sync="value1" width="30%" center>
+                <el-date-picker style="width:100%;"
+                  v-model="searchContent"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  format="yyyy 年 MM 月 dd 日"
+                  value-format="yyyy-MM-dd">
+                </el-date-picker>
+                <span slot="footer" class="dialog-footer">
+                  <el-button type="primary" @click="value1=false">确 定</el-button>
+                  <el-button @click="searchContent=''">重 置</el-button>
+                </span>
+              </el-dialog>
             </el-col>
             <el-col :span="4" v-if="uType=='dataentry'">
               <el-button type="primary" icon="el-icon-plus" @click="NewInfo">新建知识</el-button>
@@ -104,6 +121,8 @@ import {CONFIG} from './../static/js/Config'
 export default {
   data () {
     return {
+      value1: false,
+
       currentPage: 1,
       totalItems: 0,
       pageSize: 50,
@@ -141,7 +160,7 @@ export default {
     this.menuText[CONFIG.UserType.kbAdmin] = ["待办事项", "已审批事项"];
 
     // 各页显示状态
-    this.menuOptions[CONFIG.UserType.dataEntry] = [`status=0,1,2,5,10,11,12,13,14,15,16,17&author=${name}`, "status=3,4,6,7"];
+    this.menuOptions[CONFIG.UserType.dataEntry] = [`status=0,1,2,5,10,11,12,13,14,15,16,17&author=${name}`, `status=3,4,6,7&author=${name}`];
     this.menuOptions[CONFIG.UserType.manager] = ["status=2,5", "status=3,4,6,7"];
     this.menuOptions[CONFIG.UserType.kbAdmin] = ["status=3,6", "status=3,4,7"];
     
@@ -219,15 +238,19 @@ export default {
     searchData() {
       if (this.searchType == "" || this.searchContent == "") {
         this.$message({
-          message: "搜索类型或搜索内容为空",
+          message: "搜索类型或搜索内容为空，显示所有信息",
           type: "warning"
         });
         this.getAllInfo(this.currentPage, this.pageSize, `${this.menuOption}`);
         return;
       } else if(this.searchType == "department") {
         this.searchText = `department=${this.searchContent}`
-      } else if(this.searchType == "applicant"){
+      } else if(this.searchType == "applicant") {
         this.searchText = `applicant=${this.searchContent}`
+      } else if(this.searchType == "timeInterval") {
+        this.searchText = `timeInterval=${this.searchContent}`
+      } else if(this.searchType == "kTitle") {
+        this.searchText = `kTitle=${this.searchContent}`
       }
       this.currentPage = 1;
       this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
@@ -290,31 +313,37 @@ export default {
     },
 
     Delete(row) {
-      var seq = row.sequence;
-      this.axios.get(`api/info/delete?token=${this.$cookies.get('token')}&sequence=${row.sequence}`).then(
-        (res) => {
-          var response = res.data;
-          if (!response.errorCode) {
-            this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
-            this.sendMessage({
-              type: 1,
-              event: "delete info"
-            });
-          } else {
-            this.$message({
-              message: response.msg,
-              type: "error"
-            });
-          }
-        }
-      ).catch(
-        (error) => {
-          this.$message({
-            message: error,
-            type: "error"
-          });
-        }
-      );
+      this.$confirm(`确认删除编号为${row.sequence}的知识条目吗？`)
+        .then(() => {
+          var seq = row.sequence;
+          this.axios.get(`api/info/delete?token=${this.$cookies.get('token')}&sequence=${row.sequence}`).then(
+            (res) => {
+              var response = res.data;
+              if (!response.errorCode) {
+                this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+                this.sendMessage({
+                  type: 1,
+                  event: "delete info"
+                });
+              } else {
+                this.$message({
+                  message: response.msg,
+                  type: "error"
+                });
+              }
+            }
+          ).catch(
+            (error) => {
+              this.$message({
+                message: error,
+                type: "error"
+              });
+            }
+          );
+        })
+        .catch(_ => {
+
+        });
     },
 
     MoveDB(row) {
