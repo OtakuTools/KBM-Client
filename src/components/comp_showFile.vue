@@ -59,15 +59,16 @@
                     <el-tag effect="dark" type="danger" size="small" v-else>{{status_fail[scope.row.curStatus-10]}}</el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column prop="department" label="申请人部门">
+                <el-table-column prop="department" label="申请人部门" v-if="false">
                   <template slot-scope="scope">
                     <el-tag effect="dark" size="small">
                       {{scope.row.department}}
                     </el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column prop="applicant" label="申请人姓名" sortable></el-table-column>
+                <el-table-column prop="applicant" label="申请人姓名" sortable v-if="false"></el-table-column>
                 <el-table-column prop="kTitle" label="知识条目标题"></el-table-column>
+                <el-table-column prop="modifyTime" label="入库时间"></el-table-column>
                 <el-table-column prop="tag" label="操作">
                   <template slot="header">
                     <div>

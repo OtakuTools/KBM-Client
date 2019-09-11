@@ -19,9 +19,9 @@
                 <el-input v-model="infoForm.password" placeholder="请输入密码" clearable show-password></el-input>
               </el-form-item>
               <el-form-item label="角色" prop="type">
-                <el-select v-model="infoForm.type" placeholder="请选择用户角色" style="width: 100%;">
-                  <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-                </el-select>
+                <el-radio-group v-model="infoForm.type" placeholder="请选择用户角色" style="width: 100%;">
+                  <el-radio-button v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-radio-button>
+                </el-radio-group>
               </el-form-item>
             </el-form>
           </el-col>
