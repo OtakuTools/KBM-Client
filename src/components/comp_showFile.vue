@@ -1,19 +1,43 @@
 <template>
   <div>
     <el-container style="background-color:#f9f9f9">
-      <el-aside width="200px">
+      <el-aside width="280px" height="100%">
         <el-menu
           default-active="1"
           class="el-menu-vertical-demo"
           @select="handleMenuSelect"
           background-color="#f9f9f9">
-          <el-menu-item index="1">
-            <i class="el-icon-menu"></i>
-            <span slot="title">{{menuText1}}</span>
+          <el-menu-item index="1" style="margin-top: 20px">
+            <el-badge :value="count[0]">
+              <el-button>
+                <i class="el-icon-document"></i>
+                <span>{{menuText[uType][0]}}</span>
+              </el-button>
+            </el-badge>
           </el-menu-item>
           <el-menu-item index="2">
-            <i class="el-icon-document"></i>
-            <span slot="title">{{menuText2}}</span>
+            <el-badge :value="count[1]">
+              <el-button>
+                <i class="el-icon-document"></i>
+                <span>{{menuText[uType][1]}}</span>
+              </el-button>
+            </el-badge>
+          </el-menu-item>
+          <el-menu-item index="3">
+            <el-badge :value="count[2]">
+              <el-button>
+                <i class="el-icon-document"></i>
+                <span>{{menuText[uType][2]}}</span>
+              </el-button>
+            </el-badge>
+          </el-menu-item>
+          <el-menu-item index="4">
+            <el-badge :value="count[3]">
+              <el-button>
+                <i class="el-icon-document"></i>
+                <span>{{menuText[uType][3]}}</span>
+              </el-button>
+            </el-badge>
           </el-menu-item>
         </el-menu>
       </el-aside>
@@ -141,9 +165,13 @@ export default {
       menuText: {},
       menuText1: "",
       menuText2: "",
+      menuText3: "一周内更新）",
+      menuText4: "知识信息",
+      menuText5: "移库信息",
 
       menuOptions: {},
       menuOption: "",
+      count:[0,1,2,3,4],
 
       uType: "",
       menuIndex: 1,
@@ -157,14 +185,14 @@ export default {
     var [type, name, t] = this.$cookies.get('token').split('_');
     this.uType = type;
 
-    this.menuText[CONFIG.UserType.dataEntry] = ["未审批信息", "已审批信息"];
-    this.menuText[CONFIG.UserType.manager] = ["待办事项", "已审批事项"];
-    this.menuText[CONFIG.UserType.kbAdmin] = ["待办事项", "已审批事项"];
-
     // 各页显示状态
-    this.menuOptions[CONFIG.UserType.dataEntry] = [`status=0,1,2,5,10,11,12,13,14,15,16,17&author=${name}`, `status=3,4,6,7&author=${name}`];
-    this.menuOptions[CONFIG.UserType.manager] = ["status=2,5", "status=3,4,6,7"];
-    this.menuOptions[CONFIG.UserType.kbAdmin] = ["status=3,6", "status=3,4,7"];
+    this.menuOptions[CONFIG.UserType.dataEntry] = [`status=0,1,2,5,10,11,12,13,14,15,16,17&author=${name}`, `status=3,4,6,7&author=${name}`,`status=4`,`status=7`];
+    this.menuOptions[CONFIG.UserType.manager] = ["status=2,5", "status=3,4,6,7",`status=4`,`status=7`];
+    this.menuOptions[CONFIG.UserType.kbAdmin] = ["status=3,6", "status=3,4,7",`status=4`,`status=7`];
+
+    this.menuText[CONFIG.UserType.dataEntry] = [`未审批信息`, `已审批信息`,`知识信息`,`移库信息`];
+    this.menuText[CONFIG.UserType.manager] = [`待办事项`, `已审批事项`,`知识信息`,`移库信息`];
+    this.menuText[CONFIG.UserType.kbAdmin] = [`待办事项`, `已审批事项`,`知识信息`,`移库信息`];
     
     [this.menuText1, this.menuText2] = this.menuText[type];
     this.menuOption = this.menuOptions[type][0];
