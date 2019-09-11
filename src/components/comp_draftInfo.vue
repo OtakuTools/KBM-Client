@@ -1,69 +1,70 @@
 <template>
   <div>
-    <el-container>
+    <el-container style="background-color:#f9f9f9">
       <el-header></el-header>
       <el-main>
-        <el-row>
-          <el-col :span="20" :offset="2">
-            <el-form :model="knowledgeForm" ref="knowledgeForm" label-position="left" label-width="120px" :rules="rules">
-              <el-form-item label="知识编号" prop="sequence" >
-                <el-input v-model="knowledgeForm.sequence" placeholder="请输入知识编号" readonly></el-input>
-              </el-form-item>
-              <el-form-item label="申请人部门" prop="department" v-if="false">
-                <el-input v-model="knowledgeForm.department" placeholder="请输入申请人部门" readonly></el-input>
-              </el-form-item>
-              <el-form-item label="申请人姓名" prop="applicant" v-if="false">
-                <el-input v-model="knowledgeForm.applicant" placeholder="请输入申请人姓名" readonly></el-input>
-              </el-form-item>
-              <el-form-item label="知识类别" prop="knowledgeType">
-                <el-radio-group v-model="knowledgeForm.knowledgeType">
-                  <el-radio-button label="基础环境"></el-radio-button>
-                  <el-radio-button label="网络设备"></el-radio-button>
-                  <el-radio-button label="主机设备"></el-radio-button>
-                  <el-radio-button label="存储设备"></el-radio-button>
-                  <el-radio-button label="桌面设备"></el-radio-button>
-                  <el-radio-button label="安全设备"></el-radio-button>
-                  <el-radio-button label="基础软件"></el-radio-button>
-                  <el-radio-button label="支撑软件"></el-radio-button>
-                  <el-radio-button label="应用软件"></el-radio-button>
-                  <el-radio-button label="其他"></el-radio-button>
-                </el-radio-group>
-              </el-form-item>
-              <el-form-item label="问题发现时间" prop="discoverTime">
-                <el-date-picker v-model="knowledgeForm.discoverTime" type="date" style="width: 100%;" placeholder="请输入问题发现时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd"></el-date-picker>
-              </el-form-item>
-              <el-form-item label="问题解决时间" prop="resolveTime">
-                <el-date-picker v-model="knowledgeForm.resolveTime" type="date" style="width: 100%;" placeholder="请输入问题解决时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd"></el-date-picker>
-              </el-form-item>
-              <el-form-item label="问题持续时间" prop="lastfor">
-                <el-input v-model="knowledgeForm.lastfor" placeholder="请输入问题持续时间"></el-input>
-              </el-form-item>
-              <el-form-item label="知识条目标题" prop="kTitle">
-                <el-input v-model="knowledgeForm.kTitle" placeholder="请输入知识条目标题"></el-input>
-              </el-form-item>
-              <el-form-item label="内容描述" prop="kContent">
-                <el-input v-model="knowledgeForm.kContent" placeholder="请输入内容描述"></el-input>
-              </el-form-item>
-              <el-form-item label="解决方法" prop="kMethod">
-                <el-input v-model="knowledgeForm.kMethod" placeholder="请输入解决方法"></el-input>
-              </el-form-item>
-            </el-form>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="20" :offset="2" v-if="userType == 0">
-            <el-button type="success" @click="create('knowledgeForm')">{{canSubmit? "保存修改":"保存" }}</el-button>
-            <el-button type="warning" @click="submit('knowledgeForm')" :disabled="!canSubmit" v-if="canSubmit">提交审核</el-button>
-            <el-button type="danger" @click="clear('knowledgeForm')">取消</el-button>
-            <el-button type="primary" @click="back('knowledgeForm')">返回</el-button>
-          </el-col>
-          <el-col :span="20" :offset="2" v-else>
-            <el-button type="success" @click="Agree">同意</el-button>
-            <el-button type="danger" @click="Disagree">不同意</el-button>
-          </el-col>
-        </el-row>
+        <el-card>
+          <el-row>
+            <el-col :span="20" :offset="2">
+              <el-form :model="knowledgeForm" ref="knowledgeForm" label-position="left" label-width="120px" :rules="rules">
+                <el-form-item label="知识编号" prop="sequence" >
+                  <el-input v-model="knowledgeForm.sequence" placeholder="请输入知识编号" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="申请人部门" prop="department" v-if="false">
+                  <el-input v-model="knowledgeForm.department" placeholder="请输入申请人部门" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="申请人姓名" prop="applicant" v-if="false">
+                  <el-input v-model="knowledgeForm.applicant" placeholder="请输入申请人姓名" readonly></el-input>
+                </el-form-item>
+                <el-form-item label="知识类别" prop="knowledgeType" style="width: 100%" display="flex" width="100%">
+                  <el-radio-group v-model="knowledgeForm.knowledgeType" style="width: 100%" display="flex" width="100%">
+                    <el-radio-button label="基础环境"></el-radio-button>
+                    <el-radio-button label="网络设备"></el-radio-button>
+                    <el-radio-button label="主机设备"></el-radio-button>
+                    <el-radio-button label="存储设备"></el-radio-button>
+                    <el-radio-button label="桌面设备"></el-radio-button>
+                    <el-radio-button label="安全设备"></el-radio-button>
+                    <el-radio-button label="基础软件"></el-radio-button>
+                    <el-radio-button label="支撑软件"></el-radio-button>
+                    <el-radio-button label="应用软件"></el-radio-button>
+                    <el-radio-button label="其他"></el-radio-button>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item label="问题发现时间" prop="discoverTime">
+                  <el-date-picker v-model="knowledgeForm.discoverTime" type="date" style="width: 100%;" placeholder="请输入问题发现时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="问题解决时间" prop="resolveTime">
+                  <el-date-picker v-model="knowledgeForm.resolveTime" type="date" style="width: 100%;" placeholder="请输入问题解决时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="问题持续时间" prop="lastfor">
+                  <el-input v-model="knowledgeForm.lastfor" placeholder="请输入问题持续时间"></el-input>
+                </el-form-item>
+                <el-form-item label="知识条目标题" prop="kTitle">
+                  <el-input v-model="knowledgeForm.kTitle" placeholder="请输入知识条目标题"></el-input>
+                </el-form-item>
+                <el-form-item label="内容描述" prop="kContent">
+                  <el-input v-model="knowledgeForm.kContent" placeholder="请输入内容描述"></el-input>
+                </el-form-item>
+                <el-form-item label="解决方法" prop="kMethod">
+                  <el-input v-model="knowledgeForm.kMethod" placeholder="请输入解决方法"></el-input>
+                </el-form-item>
+              </el-form>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="20" :offset="2" v-if="userType == 0">
+              <el-button type="success" @click="create('knowledgeForm')">{{canSubmit? "保存修改":"保存" }}</el-button>
+              <el-button type="warning" @click="submit('knowledgeForm')" :disabled="!canSubmit" v-if="canSubmit">提交审核</el-button>
+              <el-button type="danger" @click="clear('knowledgeForm')">取消</el-button>
+              <el-button type="primary" @click="back('knowledgeForm')">返回</el-button>
+            </el-col>
+            <el-col :span="20" :offset="2" v-else>
+              <el-button type="success" @click="Agree">同意</el-button>
+              <el-button type="danger" @click="Disagree">不同意</el-button>
+            </el-col>
+          </el-row>
+        </el-card>
       </el-main>
-      <el-footer></el-footer>
     </el-container>
   </div>
 </template>

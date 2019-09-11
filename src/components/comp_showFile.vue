@@ -1,11 +1,12 @@
 <template>
   <div>
-    <el-container>
+    <el-container style="background-color:#f9f9f9">
       <el-aside width="200px">
         <el-menu
           default-active="1"
           class="el-menu-vertical-demo"
-          @select="handleMenuSelect">
+          @select="handleMenuSelect"
+          background-color="#f9f9f9">
           <el-menu-item index="1">
             <i class="el-icon-menu"></i>
             <span slot="title">{{menuText1}}</span>
@@ -16,7 +17,7 @@
           </el-menu-item>
         </el-menu>
       </el-aside>
-      <el-container>
+      <el-container style="background-color:#f9f9f9">
         <el-main>
           <el-row>
             <el-col :span="uType=='dataentry'? 16:20" :offset="2">

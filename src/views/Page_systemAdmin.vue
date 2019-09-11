@@ -4,7 +4,7 @@
       <el-header>
         <compheader />
       </el-header>
-      <el-main>
+      <el-main style="background-color:#f9f9f9">
         <el-tabs tab-position="left">
           <el-tab-pane label="用户状态">
             <userList />

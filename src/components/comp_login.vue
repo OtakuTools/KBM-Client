@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <el-container>
+  <div style="background-color:#f9f9f9">
+    <el-container style="background-color:#f9f9f9">
       <el-header></el-header>
-      <el-main>
+      <el-main style="background-color:#f9f9f9">
         <el-card class="box-card" style="width: 500px; height: 420px; position: absolute; left: calc(50% - 250px); top: calc(50% - 210px);">
           <el-row style="margin: 10px 0px;">
             <el-col :span="20" :offset="2">
