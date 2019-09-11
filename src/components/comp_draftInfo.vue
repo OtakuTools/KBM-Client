@@ -16,7 +16,18 @@
                 <el-input v-model="knowledgeForm.applicant" placeholder="请输入申请人姓名"></el-input>
               </el-form-item>
               <el-form-item label="知识类别" prop="knowledgeType">
-                <el-input v-model="knowledgeForm.knowledgeType" placeholder="请输入知识类别"></el-input>
+                <el-radio-group v-model="knowledgeForm.knowledgeType">
+                  <el-radio-button label="基础环境"></el-radio-button>
+                  <el-radio-button label="网络设备"></el-radio-button>
+                  <el-radio-button label="主机设备"></el-radio-button>
+                  <el-radio-button label="存储设备"></el-radio-button>
+                  <el-radio-button label="桌面设备"></el-radio-button>
+                  <el-radio-button label="安全设备"></el-radio-button>
+                  <el-radio-button label="基础软件"></el-radio-button>
+                  <el-radio-button label="支撑软件"></el-radio-button>
+                  <el-radio-button label="应用软件"></el-radio-button>
+                  <el-radio-button label="其他"></el-radio-button>
+                </el-radio-group>
               </el-form-item>
               <el-form-item label="问题发现时间" prop="discoverTime">
                 <el-date-picker v-model="knowledgeForm.discoverTime" type="date" style="width: 100%;" placeholder="请输入问题发现时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd"></el-date-picker>
