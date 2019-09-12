@@ -178,6 +178,7 @@ export default {
       uType: "",
       menuIndex: 1,
       recentOnly: false,
+      timeRange: "",
 
       websocket: null,
       loadingTable: false
@@ -239,7 +240,13 @@ export default {
 
   methods: {
     showRecent(){
-      console.log(this.recentOnly)
+      if( this.recentOnly == true ){
+        var end = new Date()
+        var begin = new Date()
+        begin.setDate( end.getDate()-7 )
+        this.timeRange = `${begin.getFullYear()}-${begin.getMonth()}-${begin.getDate()},${end.getFullYear()}-${end.getMonth()}-${end.getDate()}`
+      }
+      this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`)
     },
 
     filterHandler(value, row, column) {
@@ -295,6 +302,8 @@ export default {
 
     getAllInfo(page, pageSize, option) {
       this.loadingTable = true;
+
+      //badge
       let qry = {
         "data": this.menuOptions[ this.uType ]
       };
@@ -307,7 +316,9 @@ export default {
           console.log(err);
         }
       );
-      this.axios.get(`api/info/search?token=${this.$cookies.get('token')}&page=${page}&recent=${this.recentOnly}&pageSize=${pageSize}${option? "&"+option: ""}`).then(
+      //
+
+      this.axios.get(`api/info/search?token=${this.$cookies.get('token')}&page=${page}${this.recentOnly?"&recent="+this.timeRange:""}&pageSize=${pageSize}${option? "&"+option: ""}`).then(
         (res) => {
           this.loadingTable = false;
           let response = res.data;
