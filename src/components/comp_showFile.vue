@@ -8,36 +8,24 @@
           @select="handleMenuSelect"
           background-color="#f9f9f9">
           <el-menu-item index="1" style="margin-top: 20px">
-            <el-badge :value="count[0]">
-              <el-button>
-                <i class="el-icon-document"></i>
-                <span>{{menuText[uType][0]}}</span>
-              </el-button>
-            </el-badge>
+            <i class="el-icon-document"></i>
+            <span>{{menuText[uType][0]}}</span>
+            <el-badge :value="count[0]" style="float: right" />
           </el-menu-item>
           <el-menu-item index="2">
-            <el-badge :value="count[1]">
-              <el-button>
-                <i class="el-icon-document"></i>
-                <span>{{menuText[uType][1]}}</span>
-              </el-button>
-            </el-badge>
+            <i class="el-icon-document"></i>
+            <span>{{menuText[uType][1]}}</span>
+            <el-badge :value="count[1]" style="float: right" />
           </el-menu-item>
           <el-menu-item index="3">
-            <el-badge :value="count[2]">
-              <el-button>
-                <i class="el-icon-document"></i>
-                <span>{{menuText[uType][2]}}</span>
-              </el-button>
-            </el-badge>
+            <i class="el-icon-document"></i>
+            <span>{{menuText[uType][2]}}</span>
+            <el-badge :value="count[2]" style="float: right" />
           </el-menu-item>
           <el-menu-item index="4">
-            <el-badge :value="count[3]">
-              <el-button>
-                <i class="el-icon-document"></i>
-                <span>{{menuText[uType][3]}}</span>
-              </el-button>
-            </el-badge>
+            <i class="el-icon-document"></i>
+            <span>{{menuText[uType][3]}}</span>
+            <el-badge :value="count[3]" style="float: right" />
           </el-menu-item>
         </el-menu>
       </el-aside>
@@ -76,7 +64,21 @@
           </el-row>
           <el-row>
             <el-col :span="20" :offset="2">
-              <el-table v-loading="loadingTable" ref="filterTable" :data="tableData" style="width: 100%" stripe>
+              <el-switch
+                style="display: block; float: left; margin-top: 20px"
+                v-model="recentOnly"
+                inactive-color="#13ce66"
+                active-color="#409eff"
+                active-text="查看一周内更新"
+                inactive-text="查看全部"
+                @change="showRecent()"
+                >
+              </el-switch>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="20" :offset="2">
+              <el-table v-loading="loadingTable" ref="filterTable" :data="tableData" style="width: 100%; margin-top: 20px" stripe>
                 <el-table-column prop="sequence" label="知识编号" sortable></el-table-column>
                 <el-table-column prop="curStatus" label="当前状态">
                   <template slot-scope="scope">
@@ -175,6 +177,7 @@ export default {
 
       uType: "",
       menuIndex: 1,
+      recentOnly: false,
 
       websocket: null,
       loadingTable: false
@@ -235,6 +238,10 @@ export default {
   },
 
   methods: {
+    showRecent(){
+      console.log(this.recentOnly)
+    },
+
     filterHandler(value, row, column) {
       const property = column['property']
       return row[property] === value
@@ -288,7 +295,19 @@ export default {
 
     getAllInfo(page, pageSize, option) {
       this.loadingTable = true;
-      this.axios.get(`api/info/search?token=${this.$cookies.get('token')}&page=${page}&pageSize=${pageSize}${option? "&"+option: ""}`).then(
+      let qry = {
+        "data": this.menuOptions[ this.uType ]
+      };
+      this.axios.post(`api/info/getBadge?token=${this.$cookies.get('token')}`,qry).then(
+        (res) => {
+          this.count = res.data.data;
+        }
+      ).catch(
+        (err) => {
+          console.log(err);
+        }
+      );
+      this.axios.get(`api/info/search?token=${this.$cookies.get('token')}&page=${page}&recent=${this.recentOnly}&pageSize=${pageSize}${option? "&"+option: ""}`).then(
         (res) => {
           this.loadingTable = false;
           let response = res.data;
@@ -544,7 +563,7 @@ export default {
           );
         }
       }
-    }
+    },
   }
 }
 </script>
