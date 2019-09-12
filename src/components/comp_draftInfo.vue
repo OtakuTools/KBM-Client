@@ -136,6 +136,21 @@ export default {
         this.userType = 1;
       }
     }
+
+    //默认使用当前用户名的realname，若已有知识条目则会被覆盖
+    this.axios.get(`api/info/getUser?token=${this.$cookies.get("token")}`).then(
+      (res) => {
+        this.knowledgeForm["applicant"] = res.data.data[0]["realname"];
+        this.knowledgeForm["department"] = res.data.data[0]["department"];
+        console.log(res.data.data[0]);
+      }
+    ).catch(
+      (err) => {
+        console.log(err);
+      }
+    );
+    //
+
     if (this.$route.query.sequence) {
       this.canSubmit = true;
       this.axios.get(`api/info/getInfo?token=${this.$cookies.get("token")}&sequence=${this.$route.query.sequence}`).then(
@@ -183,7 +198,7 @@ export default {
           });
         }
       );
-    }
+    };
   },
 
   mounted() {
