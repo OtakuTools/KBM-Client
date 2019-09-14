@@ -4,7 +4,7 @@
       <el-header></el-header>
       <el-main>
         <el-row>
-          <el-col :span="10" :offset="6">
+          <el-col :span="10" :offset="6" style="min-width: 500px;">
             <el-form :model="infoForm" label-position="left" ref="infoForm" label-width="80px" :rules="rules">
               <el-form-item label="用户姓名" prop="realname">
                 <el-input v-model="infoForm.realname" placeholder="请输入真实姓名" clearable></el-input>
@@ -19,8 +19,8 @@
                 <el-input v-model="infoForm.password" placeholder="请输入密码" clearable show-password></el-input>
               </el-form-item>
               <el-form-item label="角色" prop="type">
-                <el-radio-group v-model="infoForm.type" placeholder="请选择用户角色" style="width: 100%;">
-                  <el-radio-button v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-radio-button>
+                <el-radio-group v-model="infoForm.type" placeholder="请选择用户角色">
+                  <el-radio-button v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-radio-button>
                 </el-radio-group>
               </el-form-item>
             </el-form>

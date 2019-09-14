@@ -1,147 +1,157 @@
 <template>
   <div>
-    <el-container style="background-color:#f9f9f9">
-      <el-aside width="280px" height="100%">
-        <el-menu
-          default-active="1"
-          class="el-menu-vertical-demo"
-          @select="handleMenuSelect"
-          background-color="#f9f9f9">
-          <el-menu-item index="1" style="margin-top: 20px">
-            <i class="el-icon-document"></i>
-            <span>{{menuText[uType][0]}}</span>
-            <el-badge :value="count[0]" style="float: right" />
-          </el-menu-item>
-          <el-menu-item index="2">
-            <i class="el-icon-document"></i>
-            <span>{{menuText[uType][1]}}</span>
-            <el-badge :value="count[1]" style="float: right" />
-          </el-menu-item>
-          <el-menu-item index="3">
-            <i class="el-icon-document"></i>
-            <span>{{menuText[uType][2]}}</span>
-            <el-badge :value="count[2]" style="float: right" />
-          </el-menu-item>
-          <el-menu-item index="4">
-            <i class="el-icon-document"></i>
-            <span>{{menuText[uType][3]}}</span>
-            <el-badge :value="count[3]" style="float: right" />
-          </el-menu-item>
-        </el-menu>
-      </el-aside>
-      <el-container style="background-color:#f9f9f9">
-        <el-main>
-          <el-row>
-            <el-col :span="uType=='dataentry'? 16:20" :offset="2">
-              <el-input placeholder="请输入内容" v-model="searchContent" style="background-color: #fff;" @focus="timeChoice=searchType=='timeInterval'" :readonly="searchType=='timeInterval'">
-                <el-select v-model="searchType" slot="prepend" placeholder="请选择查找类型" style="width: 180px;">
-                  <el-option label="部门名称" value="department"></el-option>
-                  <el-option label="申请人" value="applicant"></el-option>
-                  <el-option label="入库时间" value="timeInterval"></el-option>
-                  <el-option label="知识标题" value="kTitle"></el-option>
-                </el-select>
-                <el-button slot="append" icon="el-icon-search" @click="searchData"></el-button>
-              </el-input>
-              <el-dialog title="时间选择" :visible.sync="timeChoice" width="30%" center>
-                <el-date-picker style="width:100%;"
-                  v-model="searchContent"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  format="yyyy 年 MM 月 dd 日"
-                  value-format="yyyy-MM-dd">
-                </el-date-picker>
-                <span slot="footer" class="dialog-footer">
-                  <el-button type="primary" @click="timeChoice=false">确 定</el-button>
-                  <el-button @click="searchContent=''">重 置</el-button>
-                </span>
-              </el-dialog>
-            </el-col>
-            <el-col :span="4" v-if="uType=='dataentry'">
-              <el-button type="primary" icon="el-icon-plus" @click="NewInfo">新建知识</el-button>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="20" :offset="2">
-              <el-switch
-                style="display: block; float: left; margin-top: 20px"
-                v-model="recentOnly"
-                inactive-color="#13ce66"
-                active-color="#409eff"
-                active-text="查看一周内更新"
-                inactive-text="查看全部"
-                @change="showRecent()"
-                >
-              </el-switch>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="20" :offset="2">
-              <el-table v-loading="loadingTable" ref="filterTable" :data="tableData" style="width: 100%; margin-top: 20px" stripe>
-                <el-table-column prop="sequence" label="知识编号" sortable></el-table-column>
-                <el-table-column prop="curStatus" label="当前状态">
-                  <template slot-scope="scope">
-                    <el-tag effect="dark" type="success" size="small" v-if="scope.row.curStatus<10">{{status_succ[scope.row.curStatus]}}</el-tag>
-                    <el-tag effect="dark" type="danger" size="small" v-else>{{status_fail[scope.row.curStatus-10]}}</el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="department" label="申请人部门" v-if="false">
-                  <template slot-scope="scope">
-                    <el-tag effect="dark" size="small">
-                      {{scope.row.department}}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="applicant" label="申请人姓名" sortable v-if="false"></el-table-column>
-                <el-table-column prop="kTitle" label="知识条目标题"></el-table-column>
-                <el-table-column prop="modifyTime" label="入库时间"></el-table-column>
-                <el-table-column prop="tag" label="操作">
-                  <template slot="header">
-                    <div>
-                      <a>操作</a>
-                    </div>
-                  </template>
-                  <template slot-scope="scope">
-                    <div v-if="menuIndex==1">
-                      <el-tooltip effect="dark" content="修改" placement="top">
-                        <el-button type="primary" size="small" icon="el-icon-edit" @click="More(scope.row)" circle :disabled="scope.row.curStatus==2" v-if="uType=='dataentry'"></el-button>
-                        <el-button type="primary" size="small" icon="el-icon-more" @click="More(scope.row)" circle v-else></el-button>
-                      </el-tooltip>
+    <el-card>
+      <el-container>
+        <el-aside width="180px" height="100%">
+          <el-menu
+            default-active="1"
+            class="el-menu-vertical-demo"
+            @select="handleMenuSelect"
+            width="280px;">
+            <el-menu-item index="1" style="margin-top: 20px">
+              <i class="el-icon-document"></i>
+              <span>{{menuText[uType][0]}}</span>
+              <el-badge :value="count[0]" style="float: right" />
+            </el-menu-item>
+            <el-menu-item index="2">
+              <i class="el-icon-document"></i>
+              <span>{{menuText[uType][1]}}</span>
+              <el-badge :value="count[1]" style="float: right" />
+            </el-menu-item>
+            <el-menu-item index="3">
+              <i class="el-icon-document"></i>
+              <span>{{menuText[uType][2]}}</span>
+              <el-badge :value="count[2]" style="float: right" />
+            </el-menu-item>
+            <el-menu-item index="4">
+              <i class="el-icon-document"></i>
+              <span>{{menuText[uType][3]}}</span>
+              <el-badge :value="count[3]" style="float: right" />
+            </el-menu-item>
+          </el-menu>
+        
+        </el-aside>
+        <el-container>
+          <el-main>
+            <el-row>
+              <el-col :span="uType=='dataentry'? 16:20" :offset="2">
+                <el-input placeholder="请输入内容" v-model="searchContent" style="background-color: #fff;" @focus="timeChoice=searchType=='timeInterval'" :readonly="searchType=='timeInterval'">
+                  <el-select v-model="searchType" slot="prepend" placeholder="请选择查找类型" style="width: 180px;">
+                    <el-option label="部门名称" value="department"></el-option>
+                    <el-option label="申请人" value="applicant"></el-option>
+                    <el-option label="入库时间" value="timeInterval"></el-option>
+                    <el-option label="知识标题" value="kTitle"></el-option>
+                  </el-select>
+                  <el-button slot="append" icon="el-icon-search" @click="searchData"></el-button>
+                </el-input>
+                <el-dialog title="时间选择" :visible.sync="timeChoice" width="30%" center>
+                  <el-date-picker style="width:100%;"
+                    v-model="searchContent"
+                    type="daterange"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    format="yyyy 年 MM 月 dd 日"
+                    value-format="yyyy-MM-dd">
+                  </el-date-picker>
+                  <span slot="footer" class="dialog-footer">
+                    <el-button type="primary" @click="timeChoice=false">确 定</el-button>
+                    <el-button @click="searchContent=''">重 置</el-button>
+                  </span>
+                </el-dialog>
+              </el-col>
+              <el-col :span="4" v-if="uType=='dataentry'">
+                <el-button type="primary" icon="el-icon-plus" @click="NewInfo">新建知识</el-button>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="20" :offset="2">
+                <el-switch
+                  style="display: block; float: left; margin-top: 20px"
+                  v-model="recentOnly"
+                  inactive-color="#13ce66"
+                  active-color="#409eff"
+                  active-text="查看一周内更新"
+                  inactive-text="查看全部"
+                  @change="showRecent()"
+                  >
+                </el-switch>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="20" :offset="2">
+                <el-table v-loading="loadingTable" ref="filterTable" :data="tableData" style="width: 100%; margin-top: 20px" stripe>
+                  <el-table-column prop="sequence" label="知识编号" sortable></el-table-column>
+                  <el-table-column prop="curStatus" label="当前状态">
+                    <template slot-scope="scope">
+                      <el-tag effect="dark" type="success" size="small" v-if="scope.row.curStatus<10">{{status_succ[scope.row.curStatus]}}</el-tag>
+                      <el-tag effect="dark" type="danger" size="small" v-else>{{status_fail[scope.row.curStatus-10]}}</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="department" label="申请人部门" v-if="false">
+                    <template slot-scope="scope">
+                      <el-tag effect="dark" size="small">
+                        {{scope.row.department}}
+                      </el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="applicant" label="申请人姓名" sortable v-if="false"></el-table-column>
+                  <el-table-column prop="kTitle" label="知识条目标题"></el-table-column>
+                  <el-table-column prop="modifyTime" label="入库时间"></el-table-column>
+                  <el-table-column prop="tag" label="操作">
+                    <template slot="header">
+                      <div>
+                        <a>操作</a>
+                      </div>
+                    </template>
+                    <template slot-scope="scope">
+                      <div v-if="menuIndex==1">
+                        <el-tooltip effect="dark" content="修改" placement="top">
+                          <el-button type="primary" size="small" icon="el-icon-edit" @click="More(scope.row)" circle :disabled="scope.row.curStatus==2" v-if="uType=='dataentry'"></el-button>
+                          <el-button type="primary" size="small" icon="el-icon-more" @click="More(scope.row)" circle v-else></el-button>
+                        </el-tooltip>
 
-                      <el-tooltip effect="dark" content="删除" placement="top">
-                        <el-button type="danger" size="small" icon="el-icon-delete" @click="Delete(scope.row)" circle :disabled="scope.row.curStatus==2" v-if="uType=='dataentry'"></el-button>
-                      </el-tooltip>
+                        <el-tooltip effect="dark" content="删除" placement="top">
+                          <el-button type="danger" size="small" icon="el-icon-delete" @click="Delete(scope.row)" circle :disabled="scope.row.curStatus==2" v-if="uType=='dataentry'"></el-button>
+                        </el-tooltip>
 
-                      <el-tooltip effect="dark" content="同意" placement="top">
-                        <el-button type="success" size="small" icon="el-icon-check" @click="Agree(scope.row)" circle v-if="uType!='dataentry'"></el-button>
-                      </el-tooltip>
-                      <el-tooltip effect="dark" content="不同意" placement="top">
-                        <el-button type="danger" size="small" icon="el-icon-close" @click="Disagree(scope.row)" circle v-if="uType!='dataentry'"></el-button>
-                      </el-tooltip>
-                    </div>
-                    <div v-else>
-                      <el-tooltip effect="dark" content="更多" placement="top">
-                        <el-button type="primary" size="small" icon="el-icon-more" @click="More(scope.row)" circle></el-button>
-                      </el-tooltip>
+                        <el-tooltip effect="dark" content="同意" placement="top">
+                          <el-button type="success" size="small" icon="el-icon-check" @click="Agree(scope.row)" circle v-if="uType!='dataentry'"></el-button>
+                        </el-tooltip>
+                        <el-tooltip effect="dark" content="不同意" placement="top">
+                          <el-button type="danger" size="small" icon="el-icon-close" @click="Disagree(scope.row)" circle v-if="uType!='dataentry'"></el-button>
+                        </el-tooltip>
+                      </div>
+                      <div v-else>
+                        <el-tooltip effect="dark" content="更多" placement="top">
+                          <el-button type="primary" size="small" icon="el-icon-more" @click="More(scope.row)" circle></el-button>
+                        </el-tooltip>
 
-                      <el-tooltip effect="dark" content="移库" placement="top">
-                        <el-button type="danger" size="small" icon="el-icon-document-remove" @click="MoveDB(scope.row)" circle v-show="uType=='dataentry' && scope.row.curStatus==4"></el-button>
-                      </el-tooltip>
-                    </div>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-col>
-          </el-row>
-        </el-main>
-        <el-footer>
-          <el-pagination :total="totalItems" :page-sizes="[1,10,20,50,80,100]" :current-page="currentPage" :page-size="20" @size-change="pageSizeChangeHandler" @current-change="pageChangeHandler" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
-        </el-footer>
+                        <el-tooltip effect="dark" content="移库" placement="top">
+                          <el-button type="danger" size="small" icon="el-icon-document-remove" @click="MoveDB(scope.row)" circle v-show="uType=='dataentry' && scope.row.curStatus==4"></el-button>
+                        </el-tooltip>
+                      </div>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </el-col>
+            </el-row>
+          </el-main>
+          <el-footer>
+            <el-pagination :total="totalItems" :page-sizes="[1,10,20,50,80,100]" :current-page="currentPage" :page-size="20" @size-change="pageSizeChangeHandler" @current-change="pageChangeHandler" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
+          </el-footer>
+        </el-container>
       </el-container>
-    </el-container>
+    </el-card>
   </div>
 </template>
+
+<style  scoped>
+.el-card {
+  width: 100%;
+  height: 100%;
+}
+</style>
 
 <script>
 import {CONFIG} from './../static/js/Config'

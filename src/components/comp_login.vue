@@ -1,8 +1,7 @@
 <template>
-  <div style="background-color:#f9f9f9">
-    <el-container style="background-color:#f9f9f9">
-      <el-header></el-header>
-      <el-main style="background-color:#f9f9f9">
+  <div>
+    <el-container style="background-color:#f2f2f2; padding:0; margin:0;">
+      <el-main style="overflow:hidden; width:calc(100vw); height:calc(100vh);">
         <el-card class="box-card" style="width: 500px; height: 420px; position: absolute; left: calc(50% - 250px); top: calc(50% - 210px);">
           <el-row style="margin: 10px 0px;">
             <el-col :span="20" :offset="2">
@@ -34,7 +33,6 @@
           </el-row>
         </el-card>
       </el-main>
-      <el-footer></el-footer>
     </el-container>
   </div>
 </template>

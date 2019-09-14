@@ -1,12 +1,10 @@
 <template>
-  <div>
-    <el-container style="background-color:#f9f9f9">
-      <el-header></el-header>
-      <el-main>
-        <el-card>
+  <el-card>
+    <el-container>
+      <el-main style="min-width: 1070px;">
           <el-row>
             <el-col :span="20" :offset="2">
-              <el-form :model="knowledgeForm" ref="knowledgeForm" label-position="left" label-width="120px" :rules="rules">
+              <el-form :model="knowledgeForm" ref="knowledgeForm" label-position="left" label-width="120px" :rules="rules" style="min-width: 1070px;">
                 <el-form-item label="知识编号" prop="sequence" >
                   <el-input v-model="knowledgeForm.sequence" placeholder="请输入知识编号" readonly></el-input>
                 </el-form-item>
@@ -16,8 +14,8 @@
                 <el-form-item label="申请人姓名" prop="applicant" v-if="false">
                   <el-input v-model="knowledgeForm.applicant" placeholder="请输入申请人姓名" readonly></el-input>
                 </el-form-item>
-                <el-form-item label="知识类别" prop="knowledgeType" style="width: 100%" display="flex" width="100%">
-                  <el-radio-group v-model="knowledgeForm.knowledgeType" style="width: 100%" display="flex" width="100%">
+                <el-form-item label="知识类别" prop="knowledgeType" style="text-align: left;">
+                  <el-radio-group v-model="knowledgeForm.knowledgeType">
                     <el-radio-button label="基础环境"></el-radio-button>
                     <el-radio-button label="网络设备"></el-radio-button>
                     <el-radio-button label="主机设备"></el-radio-button>
@@ -63,11 +61,17 @@
               <el-button type="danger" @click="Disagree">不同意</el-button>
             </el-col>
           </el-row>
-        </el-card>
       </el-main>
     </el-container>
-  </div>
+  </el-card>
 </template>
+
+<style lang="less">
+.el-form-item {
+  margin-bottom: calc(5vh);
+  height: 11%;
+}
+</style>
 
 <script>
 import {CONFIG} from './../static/js/Config'

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-menu mode="horizontal" style="overflow: hidden; height: 60px;" background-color="#f9f9f9">
+    <el-menu mode="horizontal" style="overflow: hidden; height: 60px;">
       <el-submenu index="1" style="position: absolute; right: 120px; height: 60px; overflow: hidden;">
         <template slot="title">
           <el-avatar shape="circle" fit="fill" size="small" src="../assets/logo.png" style="margin-right: 10px;"></el-avatar>

@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <el-container>
-      <el-header>
-        <compheader />
-      </el-header>
-      <el-main style="background-color:#f9f9f9">
+  <el-container>
+    <el-header>
+      <compheader />
+    </el-header>
+    <el-main>
+      <el-card>
         <el-tabs tab-position="left">
           <el-tab-pane label="用户状态">
             <userList />
@@ -13,11 +13,23 @@
             <compRegist />
           </el-tab-pane>
         </el-tabs>
-      </el-main>
-    </el-container>
-  </div>
+      </el-card>
+    </el-main>
+  </el-container>
 </template>
 
+<style scoped>
+  .el-container {
+    width: 100%;
+    height: calc(100vh);
+    background-color: #f2f2f2;
+    padding: 0;
+  }
+
+  .el-header {
+    padding: 0;
+  }
+</style>
 
 <script>
 // @ is an alias to /src
