@@ -33,7 +33,7 @@
         <el-main>
           <el-row>
             <el-col :span="uType=='dataentry'? 16:20" :offset="2">
-              <el-input placeholder="请输入内容" v-model="searchContent" style="background-color: #fff;" @focus="value1=searchType=='timeInterval'" :readonly="searchType=='timeInterval'">
+              <el-input placeholder="请输入内容" v-model="searchContent" style="background-color: #fff;" @focus="timeChoice=searchType=='timeInterval'" :readonly="searchType=='timeInterval'">
                 <el-select v-model="searchType" slot="prepend" placeholder="请选择查找类型" style="width: 180px;">
                   <el-option label="部门名称" value="department"></el-option>
                   <el-option label="申请人" value="applicant"></el-option>
@@ -42,7 +42,7 @@
                 </el-select>
                 <el-button slot="append" icon="el-icon-search" @click="searchData"></el-button>
               </el-input>
-              <el-dialog title="时间选择" :visible.sync="value1" width="30%" center>
+              <el-dialog title="时间选择" :visible.sync="timeChoice" width="30%" center>
                 <el-date-picker style="width:100%;"
                   v-model="searchContent"
                   type="daterange"
@@ -53,7 +53,7 @@
                   value-format="yyyy-MM-dd">
                 </el-date-picker>
                 <span slot="footer" class="dialog-footer">
-                  <el-button type="primary" @click="value1=false">确 定</el-button>
+                  <el-button type="primary" @click="timeChoice=false">确 定</el-button>
                   <el-button @click="searchContent=''">重 置</el-button>
                 </span>
               </el-dialog>
@@ -149,7 +149,7 @@ import {CONFIG} from './../static/js/Config'
 export default {
   data () {
     return {
-      value1: false,
+      timeChoice: false,
 
       currentPage: 1,
       totalItems: 0,
@@ -200,6 +200,7 @@ export default {
     
     [this.menuText1, this.menuText2] = this.menuText[type];
     this.menuOption = this.menuOptions[type][0];
+    this.getBadge();
     this.getAllInfo(this.currentPage, this.pageSize, this.menuOption);
   },
 
@@ -219,7 +220,8 @@ export default {
         let data = event.data;
         let result = JSON.parse(data);
         if (result.type === 1) {
-          this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+          this.getBadge();
+          this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}${this.recentOnly?"&"+this.timeRange:""}`);
         }
       };
 
@@ -240,13 +242,16 @@ export default {
 
   methods: {
     showRecent(){
-      if( this.recentOnly == true ){
-        var end = new Date()
-        var begin = new Date()
-        begin.setDate( end.getDate()-7 )
-        this.timeRange = `${begin.getFullYear()}-${begin.getMonth()}-${begin.getDate()},${end.getFullYear()}-${end.getMonth()}-${end.getDate()}`
+      if ( this.recentOnly == true ) {
+        var end = new Date();
+        var begin = new Date();
+        begin.setDate( end.getDate()-7 );
+        let startStr = `${begin.getFullYear()}-${begin.getMonth()>=10?begin.getMonth():"0"+""+begin.getMonth()}-${begin.getDate()>=10?begin.getDate():"0"+""+begin.getDate()}`;
+        let endStr = `${end.getFullYear()}-${end.getMonth()>=10?end.getMonth():"0"+""+end.getMonth()}-${end.getDate()>=10?end.getDate():"0"+""+end.getDate()}`;
+        this.timeRange = `recent=${startStr},${endStr}`;
       }
-      this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`)
+      this.getBadge();
+      this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}${this.recentOnly?"&"+this.timeRange:""}`)
     },
 
     filterHandler(value, row, column) {
@@ -257,7 +262,7 @@ export default {
     pageSizeChangeHandler(val) {
       this.pageSize = val;
       this.currentPage = 1;
-      this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+      this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}${this.recentOnly?"&"+this.timeRange:""}`);
     },
 
     sendMessage(info) {
@@ -268,7 +273,7 @@ export default {
 
     pageChangeHandler(val) {
       this.currentPage = val;
-      this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+      this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}${this.recentOnly?"&"+this.timeRange:""}`);
     },
 
     handleMenuSelect(key, keyPath) {
@@ -276,7 +281,7 @@ export default {
       this.menuOption = this.menuOptions[type][parseInt(key)-1];
       this.currentPage = 1;
       this.menuIndex = parseInt(key);
-      this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+      this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}${this.recentOnly?"&"+this.timeRange:""}`);
     },
 
     searchData() {
@@ -297,12 +302,10 @@ export default {
         this.searchText = `kTitle=${this.searchContent}`
       }
       this.currentPage = 1;
-      this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+      this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}${this.recentOnly?"&"+this.timeRange:""}`);
     },
 
-    getAllInfo(page, pageSize, option) {
-      this.loadingTable = true;
-
+    getBadge() {
       //badge
       let qry = {
         "data": this.menuOptions[ this.uType ]
@@ -316,9 +319,11 @@ export default {
           console.log(err);
         }
       );
-      //
+    },
 
-      this.axios.get(`api/info/search?token=${this.$cookies.get('token')}&page=${page}${this.recentOnly?"&recent="+this.timeRange:""}&pageSize=${pageSize}${option? "&"+option: ""}`).then(
+    getAllInfo(page, pageSize, option) {
+      this.loadingTable = true;
+      this.axios.get(`api/info/search?token=${this.$cookies.get('token')}&page=${page}&pageSize=${pageSize}${option? "&"+option: ""}`).then(
         (res) => {
           this.loadingTable = false;
           let response = res.data;
@@ -380,7 +385,7 @@ export default {
             (res) => {
               var response = res.data;
               if (!response.errorCode) {
-                this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+                this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}${this.recentOnly?"&"+this.timeRange:""}`);
                 this.sendMessage({
                   type: 1,
                   event: "delete info"
@@ -417,7 +422,7 @@ export default {
         (res) => {
           var response = res.data;
           if (!response.errorCode) {
-            this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+            this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}${this.recentOnly?"&"+this.timeRange:""}`);
             this.sendMessage({
               type: 1,
               event: "move db"
@@ -453,7 +458,7 @@ export default {
             (res) => {
               var response = res.data;
               if (!response.errorCode) {
-                this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+                this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}${this.recentOnly?"&"+this.timeRange:""}`);
                 this.sendMessage({
                   type: 1,
                   event: "agree audit"
@@ -484,7 +489,7 @@ export default {
             (res) => {
               var response = res.data;
               if (!response.errorCode) {
-                this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+                this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}${this.recentOnly?"&"+this.timeRange:""}`);
                 this.sendMessage({
                   type: 1,
                   event: "agree inbound"
@@ -521,7 +526,7 @@ export default {
             (res) => {
               var response = res.data;
               if (!response.errorCode) {
-                this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+                this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}${this.recentOnly?"&"+this.timeRange:""}`);
                 this.sendMessage({
                   type: 1,
                   event: "disagree audit"
@@ -552,7 +557,7 @@ export default {
             (res) => {
               var response = res.data;
               if (!response.errorCode) {
-                this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}`);
+                this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}${this.recentOnly?"&"+this.timeRange:""}`);
                 this.sendMessage({
                   type: 1,
                   event: "disagree inbound"
