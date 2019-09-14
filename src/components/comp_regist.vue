@@ -20,7 +20,7 @@
               </el-form-item>
               <el-form-item label="角色" prop="type">
                 <el-radio-group v-model="infoForm.type" placeholder="请选择用户角色">
-                  <el-radio-button v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-radio-button>
+                  <el-radio-button v-for="item in options" :key="item.label" :value="item.value" :label="item.value">{{item.label}}</el-radio-button>
                 </el-radio-group>
               </el-form-item>
             </el-form>
