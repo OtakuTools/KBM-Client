@@ -8,10 +8,10 @@
                 <el-form-item label="知识编号" prop="sequence" >
                   <el-input v-model="knowledgeForm.sequence" placeholder="请输入知识编号" readonly></el-input>
                 </el-form-item>
-                <el-form-item label="申请人部门" prop="department" v-if="false">
+                <el-form-item label="申请人部门" prop="department">
                   <el-input v-model="knowledgeForm.department" placeholder="请输入申请人部门" readonly></el-input>
                 </el-form-item>
-                <el-form-item label="申请人姓名" prop="applicant" v-if="false">
+                <el-form-item label="申请人姓名" prop="applicant">
                   <el-input v-model="knowledgeForm.applicant" placeholder="请输入申请人姓名" readonly></el-input>
                 </el-form-item>
                 <el-form-item label="知识类别" prop="knowledgeType" style="text-align: left;">
