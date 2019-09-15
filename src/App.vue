@@ -77,8 +77,9 @@ export default {
                 type: 0,
                 event: "user logout"
               });
-              this.$confirm('检测到无任何操作，账户登出。请重新登录！', '提示', {
+              this.$confirm('检测到最近无任何操作，账户自动登出。请重新登录！', '提示', {
                 confirmButtonText: '确定',
+                showCancelButton: false,
                 type: 'warning'
               }).then(() => {
                 this.$cookies.remove("token");
