@@ -10,7 +10,7 @@ import { CONFIG } from './static/js/Config';
 export default {
   data() {
     return {
-      logoutLimit: 1000 * 10 * 15, // 15分钟
+      logoutLimit: 1000 * 60 * 5, // 5分钟
       websocket: null
     }
   },
