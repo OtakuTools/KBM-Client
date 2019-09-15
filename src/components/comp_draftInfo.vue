@@ -66,7 +66,7 @@
   </el-card>
 </template>
 
-<style lang="less">
+<style scoped>
 .el-form-item {
   margin-bottom: calc(5vh);
   height: 11%;
@@ -140,7 +140,7 @@ export default {
         this.userType = 1;
       }
     }
-
+    
     //默认使用当前用户名的realname，若已有知识条目则会被覆盖
     this.axios.get(`api/info/getUser?token=${this.$cookies.get("token")}`).then(
       (res) => {
@@ -153,8 +153,7 @@ export default {
         console.log(err);
       }
     );
-    //
-
+    
     if (this.$route.query.sequence) {
       this.canSubmit = true;
       this.axios.get(`api/info/getInfo?token=${this.$cookies.get("token")}&sequence=${this.$route.query.sequence}`).then(
@@ -178,9 +177,10 @@ export default {
           });
         }
       );
-    } else if(this.$cookies.get("new_seq") &&  this.$cookies.get("new_seq") != "") {
+    } else if (this.$cookies.isKey("new_seq") && this.$cookies.get("new_seq") != "") {
       this.knowledgeForm.sequence = this.$cookies.get("new_seq");
     } else {
+      console.log("a");
       this.axios.get(`api/info/getSeq?token=${this.$cookies.get("token")}`).then(
         (res) => {
           let response = res.data;
@@ -206,6 +206,7 @@ export default {
   },
 
   mounted() {
+
     if (typeof(WebSocket) === "undefined"){
       this.$message({
         message: "该浏览器不支持WebSocket",
@@ -255,7 +256,7 @@ export default {
             (res) => {
               let response = res.data;
               if (!response.errorCode) {
-                this.$cookies.set("new_seq", "");
+                this.$cookies.remove("new_seq");
                 this.sendMessage({
                   type: 1,
                   event: "create info"

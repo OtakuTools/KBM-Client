@@ -41,7 +41,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   if(to.meta.requireAuth) {
-    if(router.app.$cookies && router.app.$cookies.get("token") && router.app.$cookies.get("token") != "") {
+    if(router.app.$cookies && router.app.$cookies.isKey("token") && router.app.$cookies.get("token") != "") {
       next()
     } else {
       next({

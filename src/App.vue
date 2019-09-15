@@ -77,12 +77,15 @@ export default {
                 type: 0,
                 event: "user logout"
               });
+
+              this.$cookies.remove("token");
+              this.$cookies.remove("new_seq");
+              
               this.$confirm('检测到最近无任何操作，账户自动登出。请重新登录！', '提示', {
                 confirmButtonText: '确定',
                 showCancelButton: false,
                 type: 'warning'
               }).then(() => {
-                this.$cookies.remove("token");
                 this.$router.push({
                   name: "login"
                 });

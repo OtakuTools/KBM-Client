@@ -159,7 +159,6 @@ export default {
                   message: response.msg,
                   type: "success"
                 });
-                this.$cookies.remove("token");
                 this.dialogFormVisible = false;
               } else {
                 this.$message({
@@ -192,6 +191,8 @@ export default {
               type: 0,
               event: "user logout"
             });
+            this.$cookies.remove("token");
+            this.$cookies.remove("new_seq");
             this.$router.push({
               name: "login"
             });

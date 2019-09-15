@@ -146,7 +146,7 @@
   </div>
 </template>
 
-<style  scoped>
+<style scoped>
 .el-card {
   width: 100%;
   height: 100%;
