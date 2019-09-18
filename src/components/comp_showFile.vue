@@ -81,6 +81,33 @@
             <el-row>
               <el-col :span="20" :offset="2">
                 <el-table v-loading="loadingTable" ref="filterTable" :data="tableData" style="width: 100%; margin-top: 20px" stripe>
+                  <el-table-column type="expand">
+                    <template slot-scope="props">
+                      <el-form label-position="left" inline class="table-expand">
+                        <el-form-item label="知识类别">
+                          <span>{{ props.row.knowledgeType }}</span>
+                        </el-form-item>
+                        <el-form-item label="问题发现时间">
+                          <span>{{ props.row.discoverTime }}</span>
+                        </el-form-item>
+                        <el-form-item label="问题解决时间">
+                          <span>{{ props.row.resolveTime }}</span>
+                        </el-form-item>
+                        <el-form-item label="问题持续时间">
+                          <span>{{ props.row.lastfor }}</span>
+                        </el-form-item>
+                        <el-form-item label="知识条目标题">
+                          <span>{{ props.row.kTitle }}</span>
+                        </el-form-item>
+                        <el-form-item label="内容描述">
+                          <span>{{ props.row.kContent }}</span>
+                        </el-form-item>
+                        <el-form-item label="解决方法">
+                          <span>{{ props.row.kMethod }}</span>
+                        </el-form-item>
+                      </el-form>
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="sequence" label="知识编号" sortable></el-table-column>
                   <el-table-column prop="curStatus" label="当前状态">
                     <template slot-scope="scope">
@@ -150,6 +177,19 @@
 .el-card {
   width: 100%;
   height: 100%;
+}
+.table-expand {
+  font-size: 0;
+}
+.table-expand label {
+  width: 300px;
+  color: #99a9bf;
+}
+.table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 100%;
+  color: #ff0000;
 }
 </style>
 
