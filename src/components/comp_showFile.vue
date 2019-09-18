@@ -109,7 +109,7 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="sequence" label="知识编号" sortable></el-table-column>
-                  <el-table-column prop="curStatus" label="当前状态">
+                  <el-table-column prop="curStatus" label="当前状态" v-if="menuIndex==1||menuIndex==2" >
                     <template slot-scope="scope">
                       <el-tag effect="dark" type="success" size="small" v-if="scope.row.curStatus<10">{{status_succ[scope.row.curStatus]}}</el-tag>
                       <el-tag effect="dark" type="danger" size="small" v-else>{{status_fail[scope.row.curStatus-10]}}</el-tag>
