@@ -112,7 +112,7 @@
                   <el-table-column prop="curStatus" label="当前状态" v-if="menuIndex==1||menuIndex==2" >
                     <template slot-scope="scope">
                       <el-tag effect="dark" type="success" size="small" v-if="scope.row.curStatus<10">{{status_succ[scope.row.curStatus]}}</el-tag>
-                      <el-tag effect="dark" type="danger" size="small" v-else>{{status_fail[scope.row.curStatus-10]}}</el-tag>
+                      <el-tag effect="dark" type="danger" size="small" @click="showOpinion(scope.row.kTitle)" v-else>{{status_fail[scope.row.curStatus-10]}}</el-tag>
                     </template>
                   </el-table-column>
                   <el-table-column prop="department" label="申请人部门" v-if="false">
@@ -291,6 +291,12 @@ export default {
   },
 
   methods: {
+    showOpinion( opinion ){
+      this.$alert(opinion, '修改意见', {
+        confirmButtonText: '确定'
+      });
+    },
+
     showRecent(){
       if ( this.recentOnly == true ) {
         var end = new Date();

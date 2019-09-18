@@ -427,37 +427,41 @@ export default {
       var [type, name, t] = this.$cookies.get('token').split('_');
       if (type == CONFIG.UserType.manager) {
         if (this.knowledgeForm.curStatus == CONFIG.Status.SUBMIT_SUCC ) {
-          var data = {
-            sequence: this.knowledgeForm.sequence,
-            curStatus: CONFIG.Status.AUDIT_FAIL,
-            auditor: name
-          }
-          this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
-            (res) => {
-              var response = res.data;
-              if (!response.errorCode) {
-                this.sendMessage({
-                  type: 1,
-                  event: "disagree audit"
-                });
-                this.$router.push({
-                  name: "listAll"
-                });
-              } else {
-                this.$message({
-                  message: response.msg,
-                  type: "error"
-                });
+          this.$prompt( '修改意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
+            var data = {
+              sequence: this.knowledgeForm.sequence,
+              curStatus: CONFIG.Status.AUDIT_FAIL,
+              auditor: name,
+              opinion: value
+            };
+            console.log(data)
+            this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
+              (res) => {
+                var response = res.data;
+                if (!response.errorCode) {
+                  this.sendMessage({
+                    type: 1,
+                    event: "disagree audit"
+                  });
+                  this.$router.push({
+                    name: "listAll"
+                  });
+                } else {
+                  this.$message({
+                    message: response.msg,
+                    type: "error"
+                  });
+                }
               }
-            }
-          ).catch(
-            (error) => {
-              this.$message({
-                  message: error,
-                  type: "error"
-                });
-            }
-          );
+            ).catch(
+              (error) => {
+                this.$message({
+                    message: error,
+                    type: "error"
+                  });
+              }
+            );
+          }).catch() 
         } else {
           this.$message({
             message: "无需操作或不符合操作条件",
