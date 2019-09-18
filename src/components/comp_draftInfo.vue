@@ -59,6 +59,7 @@
             <el-col :span="20" :offset="2" v-else>
               <el-button type="success" @click="Agree">同意</el-button>
               <el-button type="danger" @click="Disagree">不同意</el-button>
+              <el-button type="primary" @click="back('knowledgeForm')">返回</el-button>
             </el-col>
           </el-row>
       </el-main>
