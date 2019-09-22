@@ -70,7 +70,6 @@
               <el-button type="primary" @click="back('knowledgeForm')">返回</el-button>
             </el-col>
           </el-row>
-          </el-row>
           <el-row v-else-if="knowledgeForm.curStatus == 4">
             <el-col :span="20" :offset="2" v-if="userType == 0">
               <el-button type="success" @click="MoveDB()">提交移库申请</el-button>
