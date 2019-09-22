@@ -60,7 +60,7 @@
               <el-button type="primary" @click="back('knowledgeForm')">返回</el-button>
             </el-col>
           </el-row>
-          <el-row v-else-if="knowledgeForm.curStatus == 2 || knowledgeForm.curStatus == 5 || knowledgeForm.curStatus == 6">
+          <el-row v-else-if="knowledgeForm.curStatus == 2 || knowledgeForm.curStatus == 3 || knowledgeForm.curStatus == 5 || knowledgeForm.curStatus == 6">
             <el-col :span="20" :offset="2" v-if="userType == 0">
               <el-button type="primary" @click="back('knowledgeForm')">返回</el-button>
             </el-col>
