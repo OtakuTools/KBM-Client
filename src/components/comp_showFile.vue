@@ -242,7 +242,7 @@ export default {
     // 各页显示状态
     this.menuOptions[CONFIG.UserType.dataEntry] = [`status=0,1,2,5,10,11,12,13,14,15,16,17&author=${name}`, `status=3,4,6,7&author=${name}`,`status=4`,`status=7`];
     this.menuOptions[CONFIG.UserType.manager] = ["status=2,5", "status=3,4,6,7",`status=4`,`status=7`];
-    this.menuOptions[CONFIG.UserType.kbAdmin] = ["status=3,6", "status=3,4,7",`status=4`,`status=7`];
+    this.menuOptions[CONFIG.UserType.kbAdmin] = ["status=3,6", "status=4,7",`status=4`,`status=7`];
 
     this.menuText[CONFIG.UserType.dataEntry] = [`未审批信息`, `已审批信息`,`知识信息`,`移库信息`];
     this.menuText[CONFIG.UserType.manager] = [`待办事项`, `已审批事项`,`知识信息`,`移库信息`];
