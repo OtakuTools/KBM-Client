@@ -49,7 +49,7 @@
               </el-form>
             </el-col>
           </el-row>
-          <el-row>
+          <el-row v-if="knowledgeForm.curStatus == 0 || knowledgeForm.curStatus == 1 || knowledgeForm.curStatus >= 10">
             <el-col :span="20" :offset="2" v-if="userType == 0">
               <el-button type="success" @click="create('knowledgeForm')">{{canSubmit? "保存修改":"保存" }}</el-button>
               <el-button type="warning" @click="submit('knowledgeForm')" :disabled="!canSubmit" v-if="canSubmit">提交审核</el-button>
@@ -57,8 +57,31 @@
               <el-button type="primary" @click="back('knowledgeForm')">返回</el-button>
             </el-col>
             <el-col :span="20" :offset="2" v-else>
+              <el-button type="primary" @click="back('knowledgeForm')">返回</el-button>
+            </el-col>
+          </el-row>
+          <el-row v-else-if="knowledgeForm.curStatus == 2 || knowledgeForm.curStatus == 5 || knowledgeForm.curStatus == 6">
+            <el-col :span="20" :offset="2" v-if="userType == 0">
+              <el-button type="primary" @click="back('knowledgeForm')">返回</el-button>
+            </el-col>
+            <el-col :span="20" :offset="2" v-else>
               <el-button type="success" @click="Agree">同意</el-button>
               <el-button type="danger" @click="Disagree">不同意</el-button>
+              <el-button type="primary" @click="back('knowledgeForm')">返回</el-button>
+            </el-col>
+          </el-row>
+          </el-row>
+          <el-row v-else-if="knowledgeForm.curStatus == 4">
+            <el-col :span="20" :offset="2" v-if="userType == 0">
+              <el-button type="success" @click="MoveDB()">提交移库申请</el-button>
+              <el-button type="primary" @click="back('knowledgeForm')">返回</el-button>
+            </el-col>
+            <el-col :span="20" :offset="2" v-else>
+              <el-button type="primary" @click="back('knowledgeForm')">返回</el-button>
+            </el-col>
+          </el-row>
+          <el-row v-else>
+            <el-col :span="20" :offset="2">
               <el-button type="primary" @click="back('knowledgeForm')">返回</el-button>
             </el-col>
           </el-row>
@@ -344,7 +367,7 @@ export default {
     Agree() {
       var [type, name, t] = this.$cookies.get('token').split('_');
       if (type == CONFIG.UserType.manager) {
-        if (this.knowledgeForm.curStatus == CONFIG.Status.SUBMIT_SUCC ) {
+        if (this.knowledgeForm.curStatus == CONFIG.Status.SUBMIT_SUCC || this.knowledgeForm.curStatus == CONFIG.Status.MOVE_SUB_SUCC) {
           var data = {
             sequence: this.knowledgeForm.sequence,
             curStatus: CONFIG.Status.AUDIT_SUCC,
@@ -383,7 +406,7 @@ export default {
           });
         }
       } else if (type == CONFIG.UserType.kbAdmin) {
-        if (this.knowledgeForm.curStatus == CONFIG.Status.AUDIT_SUCC) {
+        if (this.knowledgeForm.curStatus == CONFIG.Status.AUDIT_SUCC || this.knowledgeForm.curStatus == CONFIG.Status.MOVE_AUD_SUCC) {
           var data = {
             sequence: this.knowledgeForm.sequence,
             curStatus: CONFIG.Status.INBOUND_SUCC
@@ -426,7 +449,7 @@ export default {
     Disagree() {
       var [type, name, t] = this.$cookies.get('token').split('_');
       if (type == CONFIG.UserType.manager) {
-        if (this.knowledgeForm.curStatus == CONFIG.Status.SUBMIT_SUCC ) {
+        if (this.knowledgeForm.curStatus == CONFIG.Status.SUBMIT_SUCC || this.knowledgeForm.curStatus == CONFIG.Status.MOVE_SUB_SUCC) {
           this.$prompt( '修改意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
             var data = {
               sequence: this.knowledgeForm.sequence,
@@ -469,7 +492,7 @@ export default {
           });
         }
       } else if (type == CONFIG.UserType.kbAdmin) {
-        if (this.knowledgeForm.curStatus == CONFIG.Status.AUDIT_SUCC) {
+        if (this.knowledgeForm.curStatus == CONFIG.Status.AUDIT_SUCC || this.knowledgeForm.curStatus == CONFIG.Status.MOVE_AUD_SUCC) {
           var data = {
             sequence: this.knowledgeForm.sequence,
             curStatus: CONFIG.Status.INBOND_FAIL
@@ -507,7 +530,42 @@ export default {
           });
         }
       }
-    }
+    },
+
+    MoveDB() {
+      var [type, name, t] = this.$cookies.get('token').split('_');
+      var data = {
+        sequence: this.knowledgeForm.sequence,
+        curStatus: CONFIG.Status.MOVE_SUB_SUCC,
+        auditor: name
+      }
+      this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
+        (res) => {
+          var response = res.data;
+          if (!response.errorCode) {
+            this.sendMessage({
+              type: 1,
+              event: "move db"
+            });
+            this.$router.push({
+              name: "listAll"
+            });
+          } else {
+            this.$message({
+              message: response.msg,
+              type: "error"
+            });
+          }
+        }
+      ).catch(
+        (error) => {
+          this.$message({
+              message: error,
+              type: "error"
+            });
+        }
+      );
+    },
   }
   
 }

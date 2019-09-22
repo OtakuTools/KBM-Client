@@ -112,7 +112,7 @@
                   <el-table-column prop="curStatus" label="当前状态" v-if="menuIndex==1||menuIndex==2" >
                     <template slot-scope="scope">
                       <el-tag effect="dark" type="success" size="small" v-if="scope.row.curStatus<10">{{status_succ[scope.row.curStatus]}}</el-tag>
-                      <el-tag effect="dark" type="danger" size="small" @click="showOpinion(scope.row.kTitle)" v-else>{{status_fail[scope.row.curStatus-10]}}</el-tag>
+                      <el-tag effect="dark" type="danger" size="small" @click="showOpinion(scope.row.opinion)" v-else>{{status_fail[scope.row.curStatus-10]}}</el-tag>
                     </template>
                   </el-table-column>
                   <el-table-column prop="department" label="申请人部门" v-if="false">
@@ -572,7 +572,7 @@ export default {
     Disagree(row) {
       var [type, name, t] = this.$cookies.get('token').split('_');
       if (type == CONFIG.UserType.manager) {
-        if (row.curStatus == CONFIG.Status.SUBMIT_SUCC || row.curStatus == CONFIG.Status.MOVE_AUD_SUCC ) {
+        if (row.curStatus == CONFIG.Status.SUBMIT_SUCC || row.curStatus == CONFIG.Status.MOVE_SUB_SUCC ) {
           var data = {
             sequence: row.sequence,
             curStatus: row.curStatus == CONFIG.Status.SUBMIT_SUCC? CONFIG.Status.AUDIT_FAIL: CONFIG.Status.MOVE_AUD_FAIL,
