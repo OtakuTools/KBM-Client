@@ -573,66 +573,72 @@ export default {
       var [type, name, t] = this.$cookies.get('token').split('_');
       if (type == CONFIG.UserType.manager) {
         if (row.curStatus == CONFIG.Status.SUBMIT_SUCC || row.curStatus == CONFIG.Status.MOVE_SUB_SUCC ) {
-          var data = {
-            sequence: row.sequence,
-            curStatus: row.curStatus == CONFIG.Status.SUBMIT_SUCC? CONFIG.Status.AUDIT_FAIL: CONFIG.Status.MOVE_AUD_FAIL,
-            auditor: name
-          }
-          this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
-            (res) => {
-              var response = res.data;
-              if (!response.errorCode) {
-                this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}${this.recentOnly?"&"+this.timeRange:""}`);
-                this.sendMessage({
-                  type: 1,
-                  event: "disagree audit"
-                });
-              } else {
-                this.$message({
-                  message: response.msg,
-                  type: "error"
-                });
+          this.$prompt( '修改意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
+            var data = {
+              sequence: row.sequence,
+              curStatus: row.curStatus == CONFIG.Status.SUBMIT_SUCC? CONFIG.Status.AUDIT_FAIL: CONFIG.Status.MOVE_AUD_FAIL,
+              auditor: name,
+              opinion: value
+            }
+            this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
+              (res) => {
+                var response = res.data;
+                if (!response.errorCode) {
+                  this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}${this.recentOnly?"&"+this.timeRange:""}`);
+                  this.sendMessage({
+                    type: 1,
+                    event: "disagree audit"
+                  });
+                } else {
+                  this.$message({
+                    message: response.msg,
+                    type: "error"
+                  });
+                }
               }
-            }
-          ).catch(
-            (error) => {
-              this.$message({
-                  message: error,
-                  type: "error"
-                });
-            }
-          );
+            ).catch(
+              (error) => {
+                this.$message({
+                    message: error,
+                    type: "error"
+                  });
+              }
+            );
+          }).catch() 
         }
       } else if (type == CONFIG.UserType.kbAdmin) {
         if (row.curStatus == CONFIG.Status.AUDIT_SUCC || row.curStatus == CONFIG.Status.MOVE_AUD_SUCC) {
-          var data = {
-            sequence: row.sequence,
-            curStatus: row.curStatus == CONFIG.Status.AUDIT_SUCC? CONFIG.Status.INBOND_FAIL : CONFIG.Status.MOVE_FAIL
-          }
-          this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
-            (res) => {
-              var response = res.data;
-              if (!response.errorCode) {
-                this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}${this.recentOnly?"&"+this.timeRange:""}`);
-                this.sendMessage({
-                  type: 1,
-                  event: "disagree inbound"
-                });
-              } else {
-                this.$message({
-                  message: response.msg,
-                  type: "error"
-                });
+          this.$prompt( '修改意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
+            var data = {
+              sequence: row.sequence,
+              curStatus: row.curStatus == CONFIG.Status.AUDIT_SUCC? CONFIG.Status.INBOND_FAIL : CONFIG.Status.MOVE_FAIL,
+              opinion: value
+            }
+            this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
+              (res) => {
+                var response = res.data;
+                if (!response.errorCode) {
+                  this.getAllInfo(this.currentPage, this.pageSize, `${this.searchText}&${this.menuOption}${this.recentOnly?"&"+this.timeRange:""}`);
+                  this.sendMessage({
+                    type: 1,
+                    event: "disagree inbound"
+                  });
+                } else {
+                  this.$message({
+                    message: response.msg,
+                    type: "error"
+                  });
+                }
               }
-            }
-          ).catch(
-            (error) => {
-              this.$message({
-                  message: error,
-                  type: "error"
-                });
-            }
-          );
+            ).catch(
+              (error) => {
+                this.$message({
+                    message: error,
+                    type: "error"
+                  });
+              }
+            );
+          }).catch() 
         }
       }
     },

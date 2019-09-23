@@ -46,6 +46,10 @@
                 <el-form-item label="解决方法" prop="kMethod">
                   <el-input v-model="knowledgeForm.kMethod" placeholder="请输入解决方法"></el-input>
                 </el-form-item>
+                <el-form-item label="修改意见" prop="opinion" v-if="knowledgeForm.opinion!=''">
+                  <el-input v-model="knowledgeForm.opinion" placehoder="修改意见" readonly v-if="false"></el-input>
+                  <span v-text="knowledgeForm.opinion" style="float: left" />
+                </el-form-item>
               </el-form>
             </el-col>
           </el-row>
