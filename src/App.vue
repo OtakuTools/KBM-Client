@@ -48,16 +48,22 @@ export default {
       logoutTimer = setTimeout(this.logout, this.logoutLimit);
     }
 
+    let logoutImmediate = () => {
+      this.logout();
+    }
+
     document.getElementById("app").addEventListener('keydown', function(e){ userOpDelay(); });
     document.getElementById("app").addEventListener('mousemove', function(e){ userOpDelay(); });
     document.getElementById("app").addEventListener('mousedown', function(e){ userOpDelay(); });
     document.getElementById("app").addEventListener('click', function(e){ userOpDelay(); });
     document.getElementById("app").addEventListener('scroll', function(e){ userOpDelay(); });
+    window.addEventListener('beforeunload', function(e){ logoutImmediate(); });
   },
 
   destroyed () {
     // 销毁监听
     this.websocket.close();
+    this.logout();
   },
 
   methods: {
