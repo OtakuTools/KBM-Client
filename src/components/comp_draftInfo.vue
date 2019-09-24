@@ -46,9 +46,9 @@
                 <el-form-item label="解决方法" prop="kMethod">
                   <el-input v-model="knowledgeForm.kMethod" placeholder="请输入解决方法"></el-input>
                 </el-form-item>
-                <el-form-item label="修改意见" prop="opinion" v-if="knowledgeForm.opinion!=''">
+                <el-form-item label="修改意见" prop="opinion" v-if="userType==0&&knowledgeForm.opinion!=''&&knowledgeForm.opinion!=undefined">
                   <el-input v-model="knowledgeForm.opinion" placehoder="修改意见" readonly v-if="false"></el-input>
-                  <span v-text="knowledgeForm.opinion" style="float: left" />
+                  <el-button type="text" v-text="knowledgeForm.opinion" style="float: left" @click="showOpinion()"/>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -189,6 +189,9 @@ export default {
           console.log(response);
           if (!response.errorCode) {
             this.knowledgeForm = response.data[0];
+            if( this.knowledgeForm.opinion != "" && this.knowledgeForm.opinion != undefined && this.userType==0 ){
+              this.$notify({title:"修改意见",message: this.knowledgeForm.opinion, duration: 0})
+            }
           } else {
             this.$message({
               message: response.msg,
@@ -207,7 +210,6 @@ export default {
     } else if (this.$cookies.isKey("new_seq") && this.$cookies.get("new_seq") != "") {
       this.knowledgeForm.sequence = this.$cookies.get("new_seq");
     } else {
-      console.log("a");
       this.axios.get(`api/info/getSeq?token=${this.$cookies.get("token")}`).then(
         (res) => {
           let response = res.data;
@@ -265,6 +267,10 @@ export default {
   },
 
   methods:{
+    showOpinion(){
+      this.$notify({title:"修改意见",message: this.knowledgeForm.opinion, duration: 0})
+    },
+
     sendMessage(info) {
       if (this.websocket && typeof this.websocket.send === 'function') {
         this.websocket.send(JSON.stringify(info));
@@ -374,8 +380,10 @@ export default {
           var data = {
             sequence: this.knowledgeForm.sequence,
             curStatus: CONFIG.Status.AUDIT_SUCC,
-            auditor: name
+            auditor: name,
+            opinion: "*"
           }
+          console.log(data)
           this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
             (res) => {
               var response = res.data;
@@ -412,7 +420,8 @@ export default {
         if (this.knowledgeForm.curStatus == CONFIG.Status.AUDIT_SUCC || this.knowledgeForm.curStatus == CONFIG.Status.MOVE_AUD_SUCC) {
           var data = {
             sequence: this.knowledgeForm.sequence,
-            curStatus: CONFIG.Status.INBOUND_SUCC
+            curStatus: CONFIG.Status.INBOUND_SUCC,
+            opinion: "*"
           }
           this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
             (res) => {
@@ -496,36 +505,38 @@ export default {
         }
       } else if (type == CONFIG.UserType.kbAdmin) {
         if (this.knowledgeForm.curStatus == CONFIG.Status.AUDIT_SUCC || this.knowledgeForm.curStatus == CONFIG.Status.MOVE_AUD_SUCC) {
-          var data = {
-            sequence: this.knowledgeForm.sequence,
-            curStatus: CONFIG.Status.INBOND_FAIL
-          }
-          this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
-            (res) => {
-              var response = res.data;
-              if (!response.errorCode) {
-                this.sendMessage({
-                  type: 1,
-                  event: "disagree inbound"
-                });
-                this.$router.push({
-                  name: "listAll"
-                });
-              } else {
-                this.$message({
-                  message: response.msg,
-                  type: "error"
-                });
+          this.$prompt( '修改意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
+            var data = {
+              sequence: this.knowledgeForm.sequence,
+              curStatus: CONFIG.Status.INBOND_FAIL
+            }
+            this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
+              (res) => {
+                var response = res.data;
+                if (!response.errorCode) {
+                  this.sendMessage({
+                    type: 1,
+                    event: "disagree inbound"
+                  });
+                  this.$router.push({
+                    name: "listAll"
+                  });
+                } else {
+                  this.$message({
+                    message: response.msg,
+                    type: "error"
+                  });
+                }
               }
-            }
-          ).catch(
-            (error) => {
-              this.$message({
-                  message: error,
-                  type: "error"
-                });
-            }
-          );
+            ).catch(
+              (error) => {
+                this.$message({
+                    message: error,
+                    type: "error"
+                  });
+              }
+            );
+          }).catch() 
         } else {
           this.$message({
             message: "无需操作或不符合操作条件",

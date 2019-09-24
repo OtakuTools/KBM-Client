@@ -508,7 +508,8 @@ export default {
           var data = {
             sequence: row.sequence,
             curStatus: row.curStatus == CONFIG.Status.SUBMIT_SUCC? CONFIG.Status.AUDIT_SUCC : CONFIG.Status.MOVE_AUD_SUCC,
-            auditor: name
+            auditor: name,
+            opinion: "*"
           }
           this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
             (res) => {
@@ -539,7 +540,8 @@ export default {
         if (row.curStatus == CONFIG.Status.AUDIT_SUCC || row.curStatus == CONFIG.Status.MOVE_AUD_SUCC) {
           var data = {
             sequence: row.sequence,
-            curStatus: row.curStatus == CONFIG.Status.AUDIT_SUCC? CONFIG.Status.INBOUND_SUCC : CONFIG.Status.MOVE_SUCC
+            curStatus: row.curStatus == CONFIG.Status.AUDIT_SUCC? CONFIG.Status.INBOUND_SUCC : CONFIG.Status.MOVE_SUCC,
+            opinion: "*"
           }
           this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
             (res) => {
