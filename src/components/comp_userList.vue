@@ -211,35 +211,42 @@ export default {
     },
 
     deleteUser(row) {
-      let data = {
-        "username": row.username
-      };
-      this.axios.post(`api/user/delete?token=${this.$cookies.get("token")}`, data).then(
-        (res) => {
-          let response = res.data;
-          if (!response.errorCode) {
-            this.$message({
-              message: "删除用户成功",
-              type: "success"
-            });
-            this.sendMessage({
-              type: 0,
-              event: "delete user"
-            });
-          } else {
-            this.$message({
-              message: response.msg,
-              type: "error"
-            });
-          }
+      this.$confirm('此操作将永久删除该用户且无法被撤销','警告！',{confirmButtonText:'删除用户',cancelButtonText:'取消删除',type: 'warning'}).then(
+        ()=>{
+          let data = {
+            "username": row.username
+          };
+          this.axios.post(`api/user/delete?token=${this.$cookies.get("token")}`, data).then(
+            (res) => {
+              let response = res.data;
+              if (!response.errorCode) {
+                this.$message({
+                  message: "删除用户成功",
+                  type: "success"
+                });
+                this.sendMessage({
+                  type: 0,
+                  event: "delete user"
+                });
+              } else {
+                this.$message({
+                  message: response.msg,
+                  type: "error"
+                });
+              }
+            }
+          ).catch(
+            (error) => {
+              this.$message({
+                message: error,
+                type: "error"
+              });
+            }
+          )
+          this.message({type: 'success',message:'已删除用户'})
         }
       ).catch(
-        (error) => {
-          this.$message({
-            message: error,
-            type: "error"
-          });
-        }
+        ()=>{this.message({type: 'info',message:'已取消'})}
       )
     },
 
