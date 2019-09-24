@@ -105,6 +105,9 @@
                         <el-form-item label="解决方法">
                           <span>{{ props.row.kMethod }}</span>
                         </el-form-item>
+                        <el-form-item label="修改意见" v-if="uType=='dataentry'&&props.row.opinion!=''&&props.row.opinion!=undefined">
+                          <span style="color: red">{{ props.row.opinion }}</span>
+                        </el-form-item>
                       </el-form>
                     </template>
                   </el-table-column>
@@ -189,7 +192,7 @@
   margin-right: 0;
   margin-bottom: 0;
   width: 100%;
-  color: #ff0000;
+  color: #99a9bf;
 }
 </style>
 
