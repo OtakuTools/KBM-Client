@@ -105,7 +105,7 @@
                         <el-form-item label="解决方法">
                           <span>{{ props.row.kMethod }}</span>
                         </el-form-item>
-                        <el-form-item label="修改意见" v-if="uType=='dataentry'&&props.row.opinion!=''&&props.row.opinion!=undefined">
+                        <el-form-item label="修改意见" v-if="uType=='dataentry'&&props.row.opinion&&props.row.opinion!=''">
                           <span style="color: red">{{ props.row.opinion }}</span>
                         </el-form-item>
                       </el-form>
@@ -115,7 +115,7 @@
                   <el-table-column prop="curStatus" label="当前状态" v-if="menuIndex==1||menuIndex==2" >
                     <template slot-scope="scope">
                       <el-tag effect="dark" type="success" size="small" v-if="scope.row.curStatus<10">{{status_succ[scope.row.curStatus]}}</el-tag>
-                      <el-tag effect="dark" type="danger" size="small" @click="showOpinion(scope.row.opinion)" v-else>{{status_fail[scope.row.curStatus-10]}}</el-tag>
+                      <el-tag effect="dark" type="danger" size="small" @click="showOpinion(scope.row.opinion, scope.row.curStatus)" v-else>{{status_fail[scope.row.curStatus-10]}}</el-tag>
                     </template>
                   </el-table-column>
                   <el-table-column prop="department" label="申请人部门" v-if="false">
@@ -294,8 +294,8 @@ export default {
   },
 
   methods: {
-    showOpinion( opinion ){
-      this.$alert(opinion, '修改意见', {
+    showOpinion( opinion, status ){
+      this.$alert(opinion, status == CONFIG.Status.AUDIT_FAIL? "审批意见":"入库意见", {
         confirmButtonText: '确定'
       });
     },
@@ -578,7 +578,7 @@ export default {
       var [type, name, t] = this.$cookies.get('token').split('_');
       if (type == CONFIG.UserType.manager) {
         if (row.curStatus == CONFIG.Status.SUBMIT_SUCC || row.curStatus == CONFIG.Status.MOVE_SUB_SUCC ) {
-          this.$prompt( '修改意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
+          this.$prompt( '审核意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
             var data = {
               sequence: row.sequence,
               curStatus: row.curStatus == CONFIG.Status.SUBMIT_SUCC? CONFIG.Status.AUDIT_FAIL: CONFIG.Status.MOVE_AUD_FAIL,
@@ -609,11 +609,11 @@ export default {
                   });
               }
             );
-          }).catch() 
+          }).catch(()=>{ return; }) 
         }
       } else if (type == CONFIG.UserType.kbAdmin) {
         if (row.curStatus == CONFIG.Status.AUDIT_SUCC || row.curStatus == CONFIG.Status.MOVE_AUD_SUCC) {
-          this.$prompt( '修改意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
+          this.$prompt( '入库意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
             var data = {
               sequence: row.sequence,
               curStatus: row.curStatus == CONFIG.Status.AUDIT_SUCC? CONFIG.Status.INBOND_FAIL : CONFIG.Status.MOVE_FAIL,
@@ -643,7 +643,7 @@ export default {
                   });
               }
             );
-          }).catch() 
+          }).catch(()=>{ return; }) 
         }
       }
     },

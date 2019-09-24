@@ -46,7 +46,7 @@
                 <el-form-item label="解决方法" prop="kMethod">
                   <el-input v-model="knowledgeForm.kMethod" placeholder="请输入解决方法"></el-input>
                 </el-form-item>
-                <el-form-item label="修改意见" prop="opinion" v-if="userType==0&&knowledgeForm.opinion!=''&&knowledgeForm.opinion!=undefined">
+                <el-form-item label="修改意见" prop="opinion" v-if="userType==0&&knowledgeForm.opinion&&knowledgeForm.opinion!=''">
                   <el-input v-model="knowledgeForm.opinion" placehoder="修改意见" readonly v-if="false"></el-input>
                   <el-button type="text" v-text="knowledgeForm.opinion" style="float: left" @click="showOpinion()"/>
                 </el-form-item>
@@ -189,8 +189,8 @@ export default {
           console.log(response);
           if (!response.errorCode) {
             this.knowledgeForm = response.data[0];
-            if( this.knowledgeForm.opinion != "" && this.knowledgeForm.opinion != undefined && this.userType==0 ){
-              this.$notify({title:"修改意见",message: this.knowledgeForm.opinion, duration: 0})
+            if( this.knowledgeForm.opinion && this.knowledgeForm.opinion != "" && this.userType == 0 ){
+              this.$notify({title:"修改意见", message: this.knowledgeForm.opinion, duration: 0})
             }
           } else {
             this.$message({
@@ -462,7 +462,7 @@ export default {
       var [type, name, t] = this.$cookies.get('token').split('_');
       if (type == CONFIG.UserType.manager) {
         if (this.knowledgeForm.curStatus == CONFIG.Status.SUBMIT_SUCC || this.knowledgeForm.curStatus == CONFIG.Status.MOVE_SUB_SUCC) {
-          this.$prompt( '修改意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
+          this.$prompt( '审批意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
             var data = {
               sequence: this.knowledgeForm.sequence,
               curStatus: CONFIG.Status.AUDIT_FAIL,
@@ -496,7 +496,7 @@ export default {
                   });
               }
             );
-          }).catch() 
+          }).catch(()=>{ return; }) 
         } else {
           this.$message({
             message: "无需操作或不符合操作条件",
@@ -505,7 +505,7 @@ export default {
         }
       } else if (type == CONFIG.UserType.kbAdmin) {
         if (this.knowledgeForm.curStatus == CONFIG.Status.AUDIT_SUCC || this.knowledgeForm.curStatus == CONFIG.Status.MOVE_AUD_SUCC) {
-          this.$prompt( '修改意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
+          this.$prompt( '入库意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
             var data = {
               sequence: this.knowledgeForm.sequence,
               curStatus: CONFIG.Status.INBOND_FAIL
@@ -536,7 +536,7 @@ export default {
                   });
               }
             );
-          }).catch() 
+          }).catch(()=>{ return; }) 
         } else {
           this.$message({
             message: "无需操作或不符合操作条件",
