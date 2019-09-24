@@ -508,7 +508,8 @@ export default {
           this.$prompt( '入库意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
             var data = {
               sequence: this.knowledgeForm.sequence,
-              curStatus: CONFIG.Status.INBOND_FAIL
+              curStatus: CONFIG.Status.INBOND_FAIL,
+              opinion: value
             }
             this.axios.post(`api/info/updateStatus?token=${this.$cookies.get('token')}`, data).then(
               (res) => {
