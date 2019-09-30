@@ -71,7 +71,7 @@ export default {
     document.getElementById("app").addEventListener('mousedown', function(e){ userOpDelay(); });
     document.getElementById("app").addEventListener('click', function(e){ userOpDelay(); });
     document.getElementById("app").addEventListener('scroll', function(e){ userOpDelay(); });
-    window.addEventListener('beforeunload', function(e){ logoutImmediate(); });
+    // window.addEventListener('beforeunload', function(e){ logoutImmediate(); });
   },
 
   destroyed () {
