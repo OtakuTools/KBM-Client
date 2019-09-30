@@ -437,7 +437,10 @@ export default {
     },
 
     Delete(row) {
-      this.$confirm(`确认删除编号为${row.sequence}的知识条目吗？`)
+      this.$confirm(`确认删除编号为${row.sequence}的知识条目吗？`, {
+        confirmButtonClass: 'cancel-btn',
+        cancelButtonClass: 'success-btn',
+      })
         .then(() => {
           var seq = row.sequence;
           this.axios.get(`api/info/delete?token=${this.$cookies.get('token')}&sequence=${row.sequence}`).then(
@@ -578,7 +581,12 @@ export default {
       var [type, name, t] = this.$cookies.get('token').split('_');
       if (type == CONFIG.UserType.manager) {
         if (row.curStatus == CONFIG.Status.SUBMIT_SUCC || row.curStatus == CONFIG.Status.MOVE_SUB_SUCC ) {
-          this.$prompt( '审核意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
+          this.$prompt( '审核意见' , '审核确认' , {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            confirmButtonClass: 'cancel-btn',
+            cancelButtonClass: 'success-btn',
+          } ).then(({ value }) => {
             var data = {
               sequence: row.sequence,
               curStatus: row.curStatus == CONFIG.Status.SUBMIT_SUCC? CONFIG.Status.AUDIT_FAIL: CONFIG.Status.MOVE_AUD_FAIL,
@@ -613,7 +621,12 @@ export default {
         }
       } else if (type == CONFIG.UserType.kbAdmin) {
         if (row.curStatus == CONFIG.Status.AUDIT_SUCC || row.curStatus == CONFIG.Status.MOVE_AUD_SUCC) {
-          this.$prompt( '入库意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
+          this.$prompt( '入库意见' , '审核确认' , {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            confirmButtonClass: 'cancel-btn',
+            cancelButtonClass: 'success-btn',
+          }).then(({ value }) => {
             var data = {
               sequence: row.sequence,
               curStatus: row.curStatus == CONFIG.Status.AUDIT_SUCC? CONFIG.Status.INBOND_FAIL : CONFIG.Status.MOVE_FAIL,

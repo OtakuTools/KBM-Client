@@ -4,6 +4,20 @@
   </div>
 </template>
 
+<style>
+.success-btn {
+  color: white !important;
+  background-color: #409EFF !important;
+  border-color: #409EFF !important;
+}
+.cancel-btn {
+  color: black !important;
+  background-color: #ffffff !important;
+  border-color: #DCDFE6 !important;
+}
+</style>
+
+
 <script>
 import { CONFIG } from './static/js/Config';
 

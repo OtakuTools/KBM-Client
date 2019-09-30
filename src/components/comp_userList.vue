@@ -74,7 +74,7 @@
         <template slot-scope="scope">
           <el-button type="text" round size="small" @click="showLog(scope.row)">操作记录</el-button>
           <el-button type="text" round size="small" @click="forceOffline(scope.row)" :disabled="scope.row.status===1">强制下线</el-button>
-          <el-button type="text" round size="small" @click="deleteUser(scope.row)" :disabled="scope.row.status===0">删除账户</el-button>
+          <el-button type="text" round size="small" @click="deleteUser(scope.row)" :disabled="scope.row.status===0 || scope.row.username === 'Admin'">删除账户</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -211,7 +211,13 @@ export default {
     },
 
     deleteUser(row) {
-      this.$confirm('此操作将永久删除该用户且无法被撤销','警告！',{confirmButtonText:'删除用户',cancelButtonText:'取消删除',type: 'warning'}).then(
+      this.$confirm('此操作将永久删除该用户且无法被撤销','警告！',{
+        confirmButtonText:'删除用户',
+        cancelButtonText:'取消删除',
+        type: 'warning',
+        confirmButtonClass: 'cancel-btn',
+        cancelButtonClass: 'success-btn',
+      }).then(
         ()=>{
           let data = {
             "username": row.username

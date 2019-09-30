@@ -462,7 +462,12 @@ export default {
       var [type, name, t] = this.$cookies.get('token').split('_');
       if (type == CONFIG.UserType.manager) {
         if (this.knowledgeForm.curStatus == CONFIG.Status.SUBMIT_SUCC || this.knowledgeForm.curStatus == CONFIG.Status.MOVE_SUB_SUCC) {
-          this.$prompt( '审批意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
+          this.$prompt( '审批意见' , '审核确认' , {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            confirmButtonClass: 'cancel-btn',
+            cancelButtonClass: 'success-btn',
+          }).then(({ value }) => {
             var data = {
               sequence: this.knowledgeForm.sequence,
               curStatus: CONFIG.Status.AUDIT_FAIL,
@@ -505,7 +510,12 @@ export default {
         }
       } else if (type == CONFIG.UserType.kbAdmin) {
         if (this.knowledgeForm.curStatus == CONFIG.Status.AUDIT_SUCC || this.knowledgeForm.curStatus == CONFIG.Status.MOVE_AUD_SUCC) {
-          this.$prompt( '入库意见' , '审核确认' , {confirmButtonText: '确定',cancelButtonText: '取消'} ).then(({ value }) => {
+          this.$prompt( '入库意见' , '审核确认' , {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            confirmButtonClass: 'cancel-btn',
+            cancelButtonClass: 'success-btn'
+          }).then(({ value }) => {
             var data = {
               sequence: this.knowledgeForm.sequence,
               curStatus: CONFIG.Status.INBOND_FAIL,
